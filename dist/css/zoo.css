@@ -1,0 +1,14 @@
+#logo {
+	text-align: center;
+	padding-top: 30px;
+}
+
+#logo img {
+	width: 300px;
+	height: auto;
+}
+
+.dataGrid {
+  width: 500px;
+  height: 250px;
+}
