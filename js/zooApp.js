@@ -1,4 +1,4 @@
-var app = angular.module("zoo", ['ui.grid'])
+var app = angular.module("zoo", ['ngMaterial', 'ui.grid'])
 
 app.controller('ZooCtrl', ['$scope', function ($scope) {
 
