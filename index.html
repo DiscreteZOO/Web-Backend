@@ -93,34 +93,39 @@
 													<ul class="fa-ul">
 														<li class="zoo-database"><i class="fa-li fa fa-database"></i> cubic vertex transitive graphs</li>
 													</ul>
+													<p ng-cloak>Results found: {{ctrl.counter}}</p>
                         </div><!-- /.panel-body -->
                     </div>
 									</div> <!-- /.col-lg-4 -->
 									<div class="col-lg-4">
 										<div class="panel panel-default">
-                        <div class="panel-heading">Selected filters<button class="pull-right btn btn-primary btn-xs" ng-click="ctrl.submitSearch()">Search</button></div>
+                        <div class="panel-heading">Selected filters
+													<button class="pull-right btn btn-primary btn-xs" ng-click="ctrl.submitSearch()">Search</button>
+												</div>
                         <div class="panel-body" ng-cloak>
 													<form name="allProperties" novalidate>
 														<ul class="fa-ul list-properties">
-															<li ng-repeat="property in ctrl.properties | filter:{selected: true}"> <!--  ng-class="{ 'has-error' : userFieldForm.email.$invalid }" -->
-																<i class="fa fa-minus" ng-click="ctrl.propertySelectSwitch(property)"></i>
-																<button type="button" ng-click="ctrl.propertyEditSwitch(property)" class="btn btn-link"><i class="fa fa-pencil"></i></button>
-																<em ng-show="property.type == 'Boolean' && property.conditionB == false">not </em>
-																{{property.name}}
-																<em ng-show="property.type == 'Numeric' && property.conditionN.length > 0">{{property.conditionN}}</em>
-																<div class="btn-group" ng-show="property.edit == true && property.type == 'Boolean'">
-																	<label class="btn btn-primary btn-xs" ng-class="{active: property.conditionB == true}" ng-model="property.conditionB" uib-btn-radio="true" ng-change="ctrl.propertyEditSwitch(property)">True</label>
-																	<label class="btn btn-primary btn-xs" ng-class="{active: property.conditionB == false}" ng-model="property.conditionB" uib-btn-radio="false" ng-change="ctrl.propertyEditSwitch(property)">False</label>
-																	<!-- ng-class="{active: property.conditionB}"-->
-																</div>
-																<div ng-show="property.edit && property.type == 'Numeric'">
-																	<ng-form name="propertyForm">
+															<ng-form name="propertyForm">
+																<li ng-repeat="property in ctrl.properties | filter:{selected: true}" ng-class="{invalid: property.type == 'Numeric' && propertyForm.conditionN.$invalid}"> <!--  ng-class="{ 'has-error' : userFieldForm.email.$invalid }" -->
+																	<button type="button" ng-show="property.edit == false" ng-click="ctrl.propertyEditSwitch(property)" class="btn btn-link pull-right"><i class="fa fa-pencil"></i></button>
+																	<button type="button" ng-show="property.edit == true && !propertyForm.conditionN.$invalid" ng-click="ctrl.propertyEditSwitch(property)" class="btn btn-link pull-right"><i class="fa fa-check"></i></button>
+																	<button type="button" ng-show="property.edit == true && propertyForm.conditionN.$invalid" class="btn btn-link pull-right"><i class="fa fa-times"></i></button>
+																	<i class="fa fa-minus" ng-click="ctrl.propertySelectSwitch(property)"></i>
+																	<em ng-show="property.type == 'Boolean' && property.conditionB == false">not </em>
+																	{{property.name}}
+																	<em ng-show="property.type == 'Numeric' && property.conditionN.length > 0">{{property.conditionN}}</em>
+																	<div class="btn-group" ng-show="property.edit == true && property.type == 'Boolean'">
+																		<label class="btn btn-primary btn-xs" ng-class="{active: property.conditionB == true}" ng-model="property.conditionB" uib-btn-radio="true" ng-change="ctrl.propertyEditSwitch(property)">True</label>
+																		<label class="btn btn-primary btn-xs" ng-class="{active: property.conditionB == false}" ng-model="property.conditionB" uib-btn-radio="false" ng-change="ctrl.propertyEditSwitch(property)">False</label>
+																		<!-- ng-class="{active: property.conditionB}"-->
+																	</div>
+																	<div ng-show="property.edit && property.type == 'Numeric'">
 																		<input type="text" ng-model="property.conditionN" name="conditionN" ng-pattern="ctrl.numericPropertyValidator" required>
 																		<p class="help-block" ng-show="propertyForm.conditionN.$invalid">Valid expression needed, see help</p>
 																		<p>{{ctrl.parsePropertyCondition(property)}}</p>
-																	</ng-form>
-																</div>
-	                          	</li>
+																	</div>
+		                          	</li>
+															</ng-form>
 														</ul>
 													</form>
                         </div><!-- /.panel-body -->
@@ -141,6 +146,12 @@
 										</div>
 									</div> <!-- /.col-lg-4 -->
 								</div> <!-- /.row -->
+								<div class="row" ng-if="ctrl.displayResults">
+									<div class="col-lg-12">
+										<div id="results" ng-cloak ui-grid="ctrl.zooGrid" class="grid" style="margin-bottom: 100px;"></div>
+									</div>
+								</div> <!-- /.row -->
+
             </div> <!-- /.container-fluid -->
         </div> <!-- /#page-wrapper -->
 
@@ -154,8 +165,8 @@
 		<script src="js/ui-bootstrap-tpls-1.0.3.min.js"></script>
 		<script src="js/ui-scroll.min.js"></script>
 		<script src="ui-grid/ui-grid.min.js"></script>
-		<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 		<script src="js/zooApp.js"></script>
+
 
 </body>
 

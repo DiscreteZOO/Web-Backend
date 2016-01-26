@@ -44,5 +44,12 @@ input[type=text] {
 .list-properties li { color: #19717F; padding: 5px 15px; border-bottom: 1px solid #ccc; }
 .list-properties li.odd { background-color: rgba(25, 113, 127, 0.05); }
 .list-properties li.last { border-bottom: 0px; }
+.list-properties li.invalid { color: #EF6E4B; background-color: rgba(239, 110, 75, 0.1); }
+.list-properties li.invalid:hover { color: #EF6E4B; background-color: rgba(239, 110, 75, 0.1); }
+.list-properties li.invalid input { border-color: #EF6E4B; }
 .list-properties li:hover { color: #1AB380; background-color: rgba(26, 179, 128, 0.1); }
 .list-properties li .fa { margin-right: 10px; }
+.list-properties li .fa-check { color: #1AB380; }
+.list-properties li .fa-times { color: #EF6E4B; }
+.list-properties li button { margin: 0; padding: 0; }
+.list-properties li .btn-group { margin-left: 10px; }
