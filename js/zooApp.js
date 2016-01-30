@@ -38,7 +38,7 @@
 			data: []
 		}
 
-		$http.get('http://localhost:8080/graphs?par=').success(function(data) {
+		$http.get('/graphs?par=').success(function(data) {
 			self.zooGrid.data = data
 			self.counter = data.length
 			self.displayResults = true
@@ -63,14 +63,14 @@
 		}
 
 		self.submitSearch = function() {
-			$http.get('http://localhost:8080/graphs?par=' + constructParameterString()).success(function(data) {
+			$http.get('/graphs?par=' + constructParameterString()).success(function(data) {
 				self.zooGrid.data = data
 				self.displayResults = true
 			})
 		}
 
 		function updateCounter() {
-			$http.get('http://localhost:8080/count?par=' + constructParameterString()).success(function(data) { self.counter = data })
+			$http.get('/count?par=' + constructParameterString()).success(function(data) { self.counter = data })
 		}
 
 		function constructParameterString() {
