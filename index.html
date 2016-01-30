@@ -81,12 +81,12 @@
         <div id="page-wrapper">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-lg-12">
+                    <div class="col-sm-12">
 											<div id="logo"><img src="img/logo.svg" /></div>
-                    </div> <!-- /.col-lg-12 -->
+                    </div> <!-- /.col-sm-12 -->
                 </div> <!-- /.row -->
 								<div class="row">
-									<div class="col-lg-4">
+									<div class="col-sm-4">
 										<div class="panel panel-default">
                         <div class="panel-heading">Repositories</div>
                         <div class="panel-body">
@@ -96,8 +96,8 @@
 													<p ng-cloak>Results found: {{ctrl.counter}}</p>
                         </div><!-- /.panel-body -->
                     </div>
-									</div> <!-- /.col-lg-4 -->
-									<div class="col-lg-4">
+									</div> <!-- /.col-sm-4 -->
+									<div class="col-sm-4">
 										<div class="panel panel-default">
                         <div class="panel-heading">Selected filters
 													<button class="pull-right btn btn-primary btn-xs" ng-click="ctrl.submitSearch()">Search</button>
@@ -108,8 +108,8 @@
 															<ng-form name="propertyForm">
 																<li ng-repeat="property in ctrl.properties | filter:{selected: true}" ng-class="{invalid: property.type == 'Numeric' && propertyForm.conditionN.$invalid}"> <!--  ng-class="{ 'has-error' : userFieldForm.email.$invalid }" -->
 																	<button type="button" ng-show="property.edit == false" ng-click="ctrl.propertyEditSwitch(property)" class="btn btn-link pull-right"><i class="fa fa-pencil"></i></button>
-																	<button type="button" ng-show="property.edit == true && !propertyForm.conditionN.$invalid" ng-click="ctrl.propertyEditSwitch(property)" class="btn btn-link pull-right"><i class="fa fa-check"></i></button>
-																	<button type="button" ng-show="property.edit == true && propertyForm.conditionN.$invalid" class="btn btn-link pull-right"><i class="fa fa-times"></i></button>
+																	<button type="button" ng-show="property.edit == true && (property.type == 'Boolean' || !propertyForm.conditionN.$invalid)" ng-click="ctrl.propertyEditSwitch(property)" class="btn btn-link pull-right"><i class="fa fa-check"></i></button>
+																	<button type="button" ng-show="property.type == 'Numeric' && (property.edit == true && propertyForm.conditionN.$invalid)" class="btn btn-link pull-right"><i class="fa fa-times"></i></button>
 																	<i class="fa fa-minus" ng-click="ctrl.propertySelectSwitch(property)"></i>
 																	<em ng-show="property.type == 'Boolean' && property.conditionB == false">not </em>
 																	{{property.name}}
@@ -130,8 +130,8 @@
 													</form>
                         </div><!-- /.panel-body -->
                     </div>
-									</div> <!-- /.col-lg-4 -->
-									<div class="col-lg-4">
+									</div> <!-- /.col-sm-4 -->
+									<div class="col-sm-4">
 										<div class="panel panel-default">
 											<div class="panel-heading">Filters</div>
 											<div class="panel-body" ng-cloak>
@@ -144,10 +144,10 @@
 	          						<input type="text" ng-model="selected" uib-typeahead="property.name for property in ctrl.properties | filter:$viewValue | limitTo:8" class="form-control">-->
 	                    </div>
 										</div>
-									</div> <!-- /.col-lg-4 -->
+									</div> <!-- /.col-sm-4 -->
 								</div> <!-- /.row -->
 								<div class="row" ng-if="ctrl.displayResults">
-									<div class="col-lg-12">
+									<div class="col-sm-12">
 										<div id="results" ng-cloak ui-grid="ctrl.zooGrid" class="grid" style="margin-bottom: 100px;"></div>
 									</div>
 								</div> <!-- /.row -->
