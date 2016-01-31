@@ -38,11 +38,8 @@
 			data: []
 		}
 
-		$http.get('/graphs?par=').success(function(data) {
-			self.zooGrid.data = data
-			self.counter = data.length
-			self.displayResults = true
-		})
+		$http.get('/count?par=').success(function(data) { self.counter = data })
+		$http.get('/graphs?par=').success(function(data) { self.zooGrid.data = data; self.displayResults = true })
 
 		self.propertyEditSwitch = function(property) {
 			var index = self.properties.indexOf(property);

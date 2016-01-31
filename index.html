@@ -146,6 +146,11 @@
 										</div>
 									</div> <!-- /.col-sm-4 -->
 								</div> <!-- /.row -->
+								<div class="row" ng-if="!ctrl.displayResults">
+									<div class="col-sm-12">
+										<div style="margin-bottom: 100px;">Loading results</div>
+									</div>
+								</div> <!-- /.row -->
 								<div class="row" ng-if="ctrl.displayResults">
 									<div class="col-sm-12">
 										<div id="results" ng-cloak ui-grid="ctrl.zooGrid" class="grid" style="margin-bottom: 100px;"></div>
