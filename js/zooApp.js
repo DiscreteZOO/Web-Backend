@@ -23,6 +23,7 @@
 			{name: 'Moebius ladder', dbName: 'is_moebius_ladder', type: 'Boolean', selected: false, conditionB: true, edit: false},
 			{name: 'odd girth', dbName: 'odd_girth', type: 'Numeric', selected: false, conditionB: true, edit: true},
 			{name: 'order', dbName: 'order', type: 'Numeric', selected: false, conditionB: true, edit: true},
+			{name: 'partial cube', dbName: 'is_partial_cube', type: 'Boolean', selected: false, conditionB: true, edit: false},
 			{name: 'prism', dbName: 'is_prism', type: 'Boolean', selected: false, conditionB: true, edit: false},
 			{name: 'split', dbName: 'is_split', type: 'Boolean', selected: false, conditionB: true, edit: false},
 			{name: 'strongly regular', dbName: 'is_strongly_regular', type: 'Boolean', selected: false, conditionB: true, edit: false},
@@ -38,8 +39,8 @@
 			data: []
 		}
 
-		$http.get('/count?par=').success(function(data) { self.counter = data })
-		$http.get('/graphs?par=').success(function(data) { self.zooGrid.data = data; self.displayResults = true })
+		$http.get('http://localhost:8080/count?par=').success(function(data) { self.counter = data })
+		$http.get('http://localhost:8080/graphs?par=').success(function(data) { self.zooGrid.data = data; self.displayResults = true })
 
 		self.propertyEditSwitch = function(property) {
 			var index = self.properties.indexOf(property);
@@ -60,14 +61,14 @@
 		}
 
 		self.submitSearch = function() {
-			$http.get('/graphs?par=' + constructParameterString()).success(function(data) {
+			$http.get('http://localhost:8080/graphs?par=' + constructParameterString()).success(function(data) {
 				self.zooGrid.data = data
 				self.displayResults = true
 			})
 		}
 
 		function updateCounter() {
-			$http.get('/count?par=' + constructParameterString()).success(function(data) { self.counter = data })
+			$http.get('http://localhost:8080/count?par=' + constructParameterString()).success(function(data) { self.counter = data })
 		}
 
 		function constructParameterString() {
