@@ -67,6 +67,10 @@
 			})
 		}
 
+		self.downloadURL = function() {
+			return '/downloadPackage?par=' + constructParameterString()
+		}
+
 		function updateCounter() {
 			$http.get('/count?par=' + constructParameterString()).success(function(data) { self.counter = data })
 		}

@@ -32,6 +32,10 @@ input[type=text] {
 	font-style: italic;
 }
 
+.fa-download {
+	color: #19717F;
+}
+
 .list-properties-simple { margin: 0 -15px; padding: 0; }
 .list-properties-simple li { color: #19717F; padding: 5px 15px; border-bottom: 1px solid #ccc; }
 .list-properties-simple li .small { margin-top: 3px; }

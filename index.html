@@ -148,11 +148,13 @@
 								</div> <!-- /.row -->
 								<div class="row" ng-if="!ctrl.displayResults">
 									<div class="col-sm-12">
+										<div class="text-right" style="margin-bottom: 50px;"><a ng-href="{{ctrl.downloadURL()}}"><i class="fa fa-download fa-2x"></i></div>
 										<div style="margin-bottom: 100px;">Loading results</div>
 									</div>
 								</div> <!-- /.row -->
 								<div class="row" ng-if="ctrl.displayResults">
 									<div class="col-sm-12">
+
 										<div id="results" ng-cloak ui-grid="ctrl.zooGrid" class="grid" style="margin-bottom: 100px;"></div>
 									</div>
 								</div> <!-- /.row -->
