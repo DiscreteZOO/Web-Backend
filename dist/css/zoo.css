@@ -8,19 +8,18 @@ input[type=text] {
 	background: none;
 }
 
-#logo {
-	text-align: center;
-	padding-top: 30px;
+.navbar-brand {
+	padding: 0;
+	margin-left: 40px;
 }
 
-#logo img {
-	width: 300px;
+.navbar-brand img {
+	width: 150px;
 	height: auto;
 }
 
-.dataGrid {
-  width: 500px;
-  height: 250px;
+.grid {
+	height: 600px;
 }
 
 .selectedProperties button {
@@ -30,6 +29,12 @@ input[type=text] {
 .zoo-database {
 	color: #EF6E4B;
 	font-style: italic;
+}
+
+.filter-block {
+	display: block;
+	height: 200px;
+	overflow: auto;
 }
 
 .fa-download {

@@ -63,7 +63,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <!-- <a class="navbar-brand" href="index.html">SB Admin v2.0</a> -->
+                <a class="navbar-brand" href="index.html"><img src="img/logo.svg" /></a>
             </div>
             <!-- /.navbar-header -->
 
@@ -80,12 +80,7 @@
         <!-- Page Content -->
         <div id="page-wrapper">
             <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-12">
-											<div id="logo"><img src="img/logo.svg" /></div>
-                    </div> <!-- /.col-sm-12 -->
-                </div> <!-- /.row -->
-								<div class="row">
+								<div class="row" style="padding-top: 50px;">
 									<div class="col-sm-4">
 										<div class="panel panel-default">
                         <div class="panel-heading">Repositories</div>
@@ -104,7 +99,7 @@
 												</div>
                         <div class="panel-body" ng-cloak>
 													<form name="allProperties" novalidate>
-														<ul class="fa-ul list-properties">
+														<ul class="fa-ul list-properties filter-block">
 															<ng-form name="propertyForm">
 																<li ng-repeat="property in ctrl.properties | filter:{selected: true}" ng-class="{invalid: property.type == 'Numeric' && propertyForm.conditionN.$invalid}"> <!--  ng-class="{ 'has-error' : userFieldForm.email.$invalid }" -->
 																	<button type="button" ng-show="property.edit == false" ng-click="ctrl.propertyEditSwitch(property)" class="btn btn-link pull-right"><i class="fa fa-pencil"></i></button>
@@ -135,7 +130,7 @@
 										<div class="panel panel-default">
 											<div class="panel-heading">Filters</div>
 											<div class="panel-body" ng-cloak>
-												<ul class="fa-ul list-properties-simple">
+												<ul class="fa-ul list-properties-simple filter-block">
 	                        <li ng-repeat="property in ctrl.properties | filter:{selected: false}" ng-click="ctrl.propertySelectSwitch(property)" ng-class="{'odd': $odd, 'last': $last}">
 	                          <i class="fa fa-plus"></i>{{property.name}}<span class="pull-right text-muted small"><em>{{property.type}}</em></span>
 	                        </li>
@@ -154,9 +149,9 @@
 								<div class="row" ng-if="ctrl.displayResults">
 									<div class="col-sm-12">
 										<div class="text-right" style="margin-bottom: 50px;"><a ng-href="{{ctrl.downloadURL()}}"><i class="fa fa-download fa-2x"></i></a></div>
-										<div id="results" ng-cloak ui-grid="ctrl.zooGrid" class="grid" style="margin-bottom: 100px;"></div>
+										<div id="results" ng-cloak ui-grid="ctrl.zooGrid" class="grid" style="margin-bottom: 100px;" ui-grid-infinite-scroll></div>
 									</div>
-								</div> <!-- /.row -->
+								</div> <!-- /.row-->
 
             </div> <!-- /.container-fluid -->
         </div> <!-- /#page-wrapper -->
@@ -168,6 +163,7 @@
     <script src="bower_components/metisMenu/dist/metisMenu.min.js"></script>
     <script src="dist/js/sb-admin-2.js"></script>
 		<script src="js/angular.min.js"></script>
+		<script src="js/angular-touch.min.js"></script>
 		<script src="js/ui-bootstrap-tpls-1.0.3.min.js"></script>
 		<script src="js/ui-scroll.min.js"></script>
 		<script src="ui-grid/ui-grid.min.js"></script>
