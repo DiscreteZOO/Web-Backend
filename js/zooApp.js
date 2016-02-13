@@ -25,10 +25,11 @@
 		]
 
     $scope.properties = [
-			{name: 'arc transitive', dbName: 'is_arc_transitive', type: 'Boolean', priority: 51, hasNull: false, selected: false, conditionB: true, edit: false},
+			{name: 'arc transitive', dbName: 'is_arc_transitive', type: 'Boolean', priority: 51, hasNull: false, selected: true, conditionB: true, edit: false},
 			{name: 'bipartite', dbName: 'is_bipartite', type: 'Boolean', priority: 52, hasNull: false, selected: false, conditionB: true, edit: false},
 			{name: 'Cayley', dbName: 'is_cayley', type: 'Boolean', priority: 53, hasNull: false, selected: false, conditionB: true, edit: false},
 			{name: 'clique number', dbName: 'clique_number', type: 'Numeric', priority: 11, hasNull: false, selected: false, conditionN: '', edit: true},
+			{name: 'degree', dbName: 'degree', type: 'Numeric', priority: 1000, hasNull: false, selected: false, conditionN: '', edit: true},
 			{name: 'diameter', dbName: 'diameter', type: 'Numeric', priority: 41, hasNull: true, selected: false, conditionN: '', edit: true},
 			{name: 'distance regular', dbName: 'is_distance_regular', type: 'Boolean', priority: 31, hasNull: false, selected: false, conditionB: true, edit: false},
 			{name: 'distance transitive', dbName: 'is_distance_transitive', type: 'Boolean', priority: 32, hasNull: false, selected: false, conditionB: true, edit: false},
@@ -37,7 +38,7 @@
 			{name: 'hamiltonian', dbName: 'is_hamiltonian', type: 'Boolean', priority: 33, hasNull: false, selected: false, conditionB: true, edit: false},
 			{name: 'Moebius ladder', dbName: 'is_moebius_ladder', type: 'Boolean', priority: 21, hasNull: false, selected: false, conditionB: true, edit: false},
 			{name: 'odd girth', dbName: 'odd_girth', type: 'Numeric', priority: 12, hasNull: true, selected: false, conditionN: '', edit: true},
-			{name: 'order', dbName: 'order', type: 'Numeric', priority: 1000, hasNull: false, selected: true, conditionN: '<=100', edit: false},
+			{name: 'order', dbName: 'order', type: 'Numeric', priority: 1001, hasNull: false, selected: true, conditionN: '<=100', edit: false},
 			{name: 'overfull', dbName: 'is_overfull', type: 'Boolean', priority: 13, hasNull: false, selected: false, conditionB: true, edit: false},
 			{name: 'partial cube', dbName: 'is_partial_cube', type: 'Boolean', priority: 22, hasNull: false, selected: false, conditionB: true, edit: false},
 			{name: 'prism', dbName: 'is_prism', type: 'Boolean', priority: 23, hasNull: true, selected: false, conditionB: true, edit: false},
@@ -94,7 +95,7 @@
 			})
 		}
 
-		$scope.downloadURL = function() { return context + '/downloadPackage?par=' + constructParameterString() }
+		$scope.downloadURL = function(format) { return context + '/' + format + '?par=' + constructParameterString() }
 
 		$scope.showColumn = function(column) {
 			var index = $scope.zooGrid.columnDefs.indexOf(column);
@@ -152,12 +153,8 @@
 				if (property.type == "Boolean") return (property.conditionB == false ? "!" : "") + property.dbName
 				else return property.dbName + ':' + (property.conditionN).replace("=", "*").replace(/\s+/, "")
 			}).join(';')
-			var resultC = selectedCensuses.map(function(census) {
-				if (census.name == "vt") return 'vt_index'
-				else if (census.name == "cvt") return 'cvt_index'
- 				else return 'symcubic_index'
-			}).join(';')
-			return resultP + (resultP.length > 0 ? ';' : '') + resultC
+			var resultC = selectedCensuses.map(function(census) { return census.dbName }).join(';')
+			return resultP + (resultP.length > 0 && resultC.length > 0 ? ';' : '') + resultC
 		}
 
 		$scope.getFirstData = function() {
