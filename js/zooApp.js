@@ -10,7 +10,7 @@
 
 	function ZooCtrl($http, $scope, $q) {
 
-		var context = "http://localhost:8080"
+		var context = ""
 
 		$scope.censuses = [
 			{ name: 'VT index', dbName: 'vt_index', longName: 'vertex transitive graphs (up to 31 vertices)', selected: true,
