@@ -10,7 +10,7 @@
 
 	function ZooCtrl($http, $scope, $q) {
 
-		var context = ""
+		var context = "http://localhost:8080"
 
 		$scope.censuses = [
 			{ name: 'VT index', dbName: 'vt_index', longName: 'vertex transitive graphs (up to 31 vertices)', selected: true,
@@ -37,7 +37,7 @@
 			{name: 'hamiltonian', dbName: 'is_hamiltonian', type: 'Boolean', priority: 33, hasNull: false, selected: false, conditionB: true, edit: false},
 			{name: 'Moebius ladder', dbName: 'is_moebius_ladder', type: 'Boolean', priority: 21, hasNull: false, selected: false, conditionB: true, edit: false},
 			{name: 'odd girth', dbName: 'odd_girth', type: 'Numeric', priority: 12, hasNull: true, selected: false, conditionN: '', edit: true},
-			{name: 'order', dbName: 'order', type: 'Numeric', priority: 1000, hasNull: false, selected: false, conditionN: '', edit: true},
+			{name: 'order', dbName: 'order', type: 'Numeric', priority: 1000, hasNull: false, selected: true, conditionN: '<=100', edit: false},
 			{name: 'overfull', dbName: 'is_overfull', type: 'Boolean', priority: 13, hasNull: false, selected: false, conditionB: true, edit: false},
 			{name: 'partial cube', dbName: 'is_partial_cube', type: 'Boolean', priority: 22, hasNull: false, selected: false, conditionB: true, edit: false},
 			{name: 'prism', dbName: 'is_prism', type: 'Boolean', priority: 23, hasNull: true, selected: false, conditionB: true, edit: false},
@@ -64,9 +64,6 @@
 	      $scope.gridApi = gridApi;
 	    }
 		}
-
-		$http.get(context + '/count?par=').success(function(data) { $scope.counter = data })
-		$http.get(context + '/graphs?par=').success(function(data) { $scope.zooGrid.data = data; $scope.displayResults = true })
 
 		$scope.propertyEditSwitch = function(property) {
 			var index = $scope.properties.indexOf(property);
@@ -238,6 +235,10 @@
 	      $scope.gridApi.infiniteScroll.resetScroll( $scope.firstPage > 0, $scope.lastPage < 4 );
 	    });
 	  });
+
+		// initialization
+		updateCounter()
+		$scope.submitSearch()
 
   } // end ZooCtrl
 
