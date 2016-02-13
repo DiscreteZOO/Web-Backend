@@ -18,6 +18,12 @@ input[type=text] {
 	height: auto;
 }
 
+.btn-primary { background-color: #19717F; }
+.btn-link { margin: 0; padding: 0 5px; }
+
+.fa-question { margin-bottom: 6px; }
+.fa-github { color: #19717F }
+
 .grid {
 	height: 600px;
 }
@@ -26,10 +32,21 @@ input[type=text] {
 	margin: 5px;
 }
 
+.icon-stack .fa-check {
+	margin: 5px 0 0 5px;
+	color: #19717F;
+}
+
 .zoo-database {
 	color: #EF6E4B;
 	font-style: italic;
+	margin: 7px 0;
 }
+
+.zoo-database:hover { cursor: pointer; }
+
+.db-deselected .fa-check { display: none; }
+.db-deselected { color: #999; }
 
 .filter-block {
 	display: block;
@@ -37,9 +54,7 @@ input[type=text] {
 	overflow: auto;
 }
 
-.fa-download {
-	color: #19717F;
-}
+.fa-download { color: #19717F; }
 
 .list-properties-simple { margin: 0 -15px; padding: 0; }
 .list-properties-simple li { color: #19717F; padding: 5px 15px; border-bottom: 1px solid #ccc; }

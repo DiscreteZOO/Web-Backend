@@ -86,38 +86,43 @@
                         <div class="panel-heading">Repositories</div>
                         <div class="panel-body">
 													<ul class="fa-ul">
-														<li class="zoo-database"><i class="fa-li fa fa-database"></i> cubic vertex transitive graphs</li>
+														<li class="zoo-database" ng-repeat="census in censuses" ng-class="classDbSelected(census)">
+															<span ng-click="switchDbSelected(census)"><span class="icon-stack"><i class="fa-li fa fa-database"></i><i class="fa-li fa fa-sm fa-check"></i></span> {{census.longName}}</span>
+															<button uib-popover="{{census.description}}" popover-trigger="mouseenter" type="button" class="btn btn-link"><i class="fa fa-question"></i></button>
+															<a ng-href="{{census.link}}"><i class="fa fa-external-link"></i></a>
+														</li>
 													</ul>
-													<p ng-cloak>Results found: {{ctrl.counter}}</p>
+													<p ng-cloak>Results found: {{counter}}</p>
+													<p><button class="pull-right btn btn-primary btn-xs" ng-click="submitSearch()">Update search results</button></p>
                         </div><!-- /.panel-body -->
                     </div>
 									</div> <!-- /.col-sm-4 -->
 									<div class="col-sm-4">
 										<div class="panel panel-default">
                         <div class="panel-heading">Selected filters
-													<button class="pull-right btn btn-primary btn-xs" ng-click="ctrl.submitSearch()">Search</button>
+													<button class="pull-right btn btn-primary btn-xs" ng-click="submitSearch()">Search</button>
 												</div>
                         <div class="panel-body" ng-cloak>
 													<form name="allProperties" novalidate>
 														<ul class="fa-ul list-properties filter-block">
 															<ng-form name="propertyForm">
-																<li ng-repeat="property in ctrl.properties | filter:{selected: true}" ng-class="{invalid: property.type == 'Numeric' && propertyForm.conditionN.$invalid}"> <!--  ng-class="{ 'has-error' : userFieldForm.email.$invalid }" -->
-																	<button type="button" ng-show="property.edit == false" ng-click="ctrl.propertyEditSwitch(property)" class="btn btn-link pull-right"><i class="fa fa-pencil"></i></button>
-																	<button type="button" ng-show="property.edit == true && (property.type == 'Boolean' || !propertyForm.conditionN.$invalid)" ng-click="ctrl.propertyEditSwitch(property)" class="btn btn-link pull-right"><i class="fa fa-check"></i></button>
+																<li ng-repeat="property in properties | filter:{selected: true}" ng-class="{invalid: property.type == 'Numeric' && propertyForm.conditionN.$invalid}"> <!--  ng-class="{ 'has-error' : userFieldForm.email.$invalid }" -->
+																	<button type="button" ng-show="property.edit == false" ng-click="propertyEditSwitch(property)" class="btn btn-link pull-right"><i class="fa fa-pencil"></i></button>
+																	<button type="button" ng-show="property.edit == true && (property.type == 'Boolean' || !propertyForm.conditionN.$invalid)" ng-click="propertyEditSwitch(property)" class="btn btn-link pull-right"><i class="fa fa-check"></i></button>
 																	<button type="button" ng-show="property.type == 'Numeric' && (property.edit == true && propertyForm.conditionN.$invalid)" class="btn btn-link pull-right"><i class="fa fa-times"></i></button>
-																	<i class="fa fa-minus" ng-click="ctrl.propertySelectSwitch(property)"></i>
+																	<i class="fa fa-minus" ng-click="propertySelectSwitch(property)"></i>
 																	<em ng-show="property.type == 'Boolean' && property.conditionB == false">not </em>
 																	{{property.name}}
 																	<em ng-show="property.type == 'Numeric' && property.conditionN.length > 0">{{property.conditionN}}</em>
 																	<div class="btn-group" ng-show="property.edit == true && property.type == 'Boolean'">
-																		<label class="btn btn-primary btn-xs" ng-class="{active: property.conditionB == true}" ng-model="property.conditionB" uib-btn-radio="true" ng-change="ctrl.propertyEditSwitch(property)">True</label>
-																		<label class="btn btn-primary btn-xs" ng-class="{active: property.conditionB == false}" ng-model="property.conditionB" uib-btn-radio="false" ng-change="ctrl.propertyEditSwitch(property)">False</label>
+																		<label class="btn btn-primary btn-xs" ng-class="{active: property.conditionB == true}" ng-model="property.conditionB" uib-btn-radio="true" ng-change="propertyEditSwitch(property)">True</label>
+																		<label class="btn btn-primary btn-xs" ng-class="{active: property.conditionB == false}" ng-model="property.conditionB" uib-btn-radio="false" ng-change="propertyEditSwitch(property)">False</label>
 																		<!-- ng-class="{active: property.conditionB}"-->
 																	</div>
 																	<div ng-show="property.edit && property.type == 'Numeric'">
-																		<input type="text" ng-model="property.conditionN" name="conditionN" ng-pattern="ctrl.numericPropertyValidator" required>
+																		<input type="text" ng-model="property.conditionN" name="conditionN" ng-pattern="numericPropertyValidator" required>
 																		<p class="help-block" ng-show="propertyForm.conditionN.$invalid">Valid expression needed, see help</p>
-																		<p>{{ctrl.parsePropertyCondition(property)}}</p>
+																		<p>{{parsePropertyCondition(property)}}</p>
 																	</div>
 		                          	</li>
 															</ng-form>
@@ -131,25 +136,33 @@
 											<div class="panel-heading">Filters</div>
 											<div class="panel-body" ng-cloak>
 												<ul class="fa-ul list-properties-simple filter-block">
-	                        <li ng-repeat="property in ctrl.properties | filter:{selected: false}" ng-click="ctrl.propertySelectSwitch(property)" ng-class="{'odd': $odd, 'last': $last}">
+	                        <li ng-repeat="property in properties | filter:{selected: false}" ng-click="propertySelectSwitch(property)" ng-class="{'odd': $odd, 'last': $last}">
 	                          <i class="fa fa-plus"></i>{{property.name}}<span class="pull-right text-muted small"><em>{{property.type}}</em></span>
 	                        </li>
 												</ul>
 												<!--<br>
-	          						<input type="text" ng-model="selected" uib-typeahead="property.name for property in ctrl.properties | filter:$viewValue | limitTo:8" class="form-control">-->
+	          						<input type="text" ng-model="selected" uib-typeahead="property.name for property in properties | filter:$viewValue | limitTo:8" class="form-control">-->
 	                    </div>
 										</div>
 									</div> <!-- /.col-sm-4 -->
 								</div> <!-- /.row -->
-								<div class="row" ng-if="!ctrl.displayResults">
+								<div class="row" ng-if="!displayResults">
 									<div class="col-sm-12">
 										<div style="margin-bottom: 100px;">Loading results</div>
 									</div>
 								</div> <!-- /.row -->
-								<div class="row" ng-if="ctrl.displayResults">
+								<div class="row" ng-if="displayResults">
 									<div class="col-sm-12">
-										<div class="text-right" style="margin-bottom: 50px;"><a ng-href="{{ctrl.downloadURL()}}"><i class="fa fa-download fa-2x"></i></a></div>
-										<div id="results" ng-cloak ui-grid="ctrl.zooGrid" class="grid" style="margin-bottom: 100px;" ui-grid-infinite-scroll></div>
+										<div style="margin: 30px 0;">
+											<a class="pull-right" ng-href="{{downloadURL()}}"><i class="fa fa-download fa-2x"></i></a>
+											<div class="btn-group" uib-dropdown is-open="status.isopen">
+									      <button id="single-button" type="button" class="btn btn-primary btn-xs" uib-dropdown-toggle ng-disabled="disabled">Show columns <span class="caret"></span></button>
+									      <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+									        <li role="menuitem" ng-repeat="column in zooGrid.columnDefs | filter:{ visible: false }" ng-click="showColumn(column)"><a href="#">{{column.name}}</a></li>
+									      </ul>
+									    </div>
+										</div>
+										<div id="results" ng-cloak ui-grid="zooGrid" class="grid" style="margin-bottom: 100px;" ui-grid-infinite-scroll></div>
 									</div>
 								</div> <!-- /.row-->
 
