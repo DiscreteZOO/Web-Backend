@@ -10,12 +10,12 @@
 
 	function ZooCtrl($http, $scope, $q) {
 
-		var context = ""
+		var context = "http://localhost:8888"
 
 		$scope.censuses = [
 			{ name: 'VT index', dbName: 'vt_index', longName: 'vertex transitive graphs (up to 31 vertices)', selected: true,
 				description: 'by Gordon Royle',
-			 	link: 'http://staffhome.ecm.uwa.edu.au/%7E00013890/remote/trans/index.html' },
+			 	link: 'Faculty of Mathematics, Natural Sciences and Information Technologies' },
 			{ name: 'CVT index', dbName: 'cvt_index', longName: 'cubic vertex transitive graphs (up to 1280 vertices)', selected: true,
 		 		description: 'by Primož Potočnik, Pablo Spiga and Gabriel Verret',
 			 	link: 'http://www.matapp.unimib.it/~spiga/census.html' },
@@ -141,7 +141,7 @@
 			})
 			var censusColumns = $scope.censuses.map(function(catalog) { return { name: catalog.name, field: catalog.dbName, visible: catalog.selected, cellFilter: 'nullFilter' } })
 
-			return censusColumns.concat(propertyColumns)
+			return [{ name: 'name', field: 'name', visible: true }].concat(censusColumns.concat(propertyColumns))
 		}
 
 		function updateCounter() { $http.get(context + '/count?par=' + constructParameterString()).success(function(data) { $scope.counter = data }) }
