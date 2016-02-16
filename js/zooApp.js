@@ -5,7 +5,7 @@
 	angular
     .module("zoo", ['ngTouch','ui.bootstrap', 'ui.grid', 'ui.grid.infiniteScroll', 'ui.scroll'])
     .controller('ZooCtrl', ['$http', '$scope', '$q', ZooCtrl])
-		.filter('nullFilter', function () { return function (value) { return ( value == 0) ? '' : value } })
+		.filter('nullFilter', function () { return function (value) { return ( value == 0 || value == 'null' ) ? '' : value } })
 		.filter('truncationFilter', function () { return function (value) { return ( value == 0) ? 'false' : 'true' } })
 
 	function ZooCtrl($http, $scope, $q) {
@@ -141,7 +141,7 @@
 			})
 			var censusColumns = $scope.censuses.map(function(catalog) { return { name: catalog.name, field: catalog.dbName, visible: catalog.selected, cellFilter: 'nullFilter' } })
 
-			return [{ name: 'name', field: 'name', visible: true }].concat(censusColumns.concat(propertyColumns))
+			return [{ name: 'name', field: 'name', visible: true, cellFilter: 'nullFilter' }].concat(censusColumns.concat(propertyColumns))
 		}
 
 		function updateCounter() { $http.get(context + '/count?par=' + constructParameterString()).success(function(data) { $scope.counter = data }) }
