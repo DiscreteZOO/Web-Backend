@@ -63,10 +63,15 @@
 		}
 
 		self.submitSearch = function() {
-			$http.get('http://localhost:8080/graphs?par=' + constructParameterString()).success(function(data) {
+            if ($scope.counter < 5000) {
+              $http.get('http://localhost:8080/graphs?par=' + constructParameterString()).success(function(data) {
 				self.zooGrid.data = data
 				self.displayResults = true
-			})
+              })
+            }
+            else {
+                alert("test")
+            }
 		}
 
 		function updateCounter() {
