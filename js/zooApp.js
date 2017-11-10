@@ -87,11 +87,16 @@
 		}
 
 		$scope.submitSearch = function() {
-			$http.get(context + '/graphs?par=' + constructParameterString()).success(function(data) {
+            if ($scope.counter < 5000) {
+              $http.get(context + '/graphs?par=' + constructParameterString()).success(function(data) {
 				$scope.zooGrid.data = data
 				$scope.zooGrid.columnDefs = propertiesToColumns()
 				$scope.displayResults = true
-			})
+              })
+            }
+            else {
+                alert("test")
+            }
 		}
 
 		$scope.downloadURL = function() { return context + '/downloadPackage?par=' + constructParameterString() }
