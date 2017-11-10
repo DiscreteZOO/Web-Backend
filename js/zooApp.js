@@ -88,7 +88,7 @@
 		}
 
 		$scope.submitSearch = function() {
-            if ($scope.counter < 5000) {
+            if ($scope.counter <= 5000) {
               $http.get(context + '/graphs?par=' + constructParameterString()).success(function(data) {
 				$scope.zooGrid.data = data
 				$scope.zooGrid.columnDefs = propertiesToColumns()
@@ -96,7 +96,7 @@
               })
             }
             else {
-                alert("test")
+                alert("Because of server issues, we ask you to load no more than 5000 graphs.")
             }
 		}
 
