@@ -1,0 +1,37 @@
+// Add additional styles here. For example, overwrite certain styles or add new components.
+// Tip: You can use bootstrap's powerful mixins here!
+
+
+//.alert-myalert {
+//  @include alert-variant(#60667d, #1d1d1d, #f4fdff);
+//}
+
+//@each $color, $value in $theme-colors {
+//  .alert-#{$color} {
+//    box-shadow: 3px 3px theme-color-level($color, -3);
+//  }
+//}
+
+.navbar img { height: $font-size-lg; }
+.navbar i { font-size: $font-size-lg; }
+
+.icon-link {
+    transition: rotate $link-icon-hover-transition ease-in-out;
+    -webkit-transition: rotate $link-icon-hover-transition ease-in-out;
+    -moz-transition: rotate $link-icon-hover-transition ease-in-out;
+    -o-transition: rotate $link-icon-hover-transition ease-in-out;
+    transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+}
+.icon-link:hover {
+    transform: rotate($link-icon-hover-rotate);
+    -webkit-transform: rotate($link-icon-hover-rotate);
+    -moz-transform: rotate($link-icon-hover-rotate);
+    -o-transform: rotate($link-icon-hover-rotate);
+    -ms-transform: rotate($link-icon-hover-rotate);
+}
+
+#licence p { margin-left: 3rem; }
