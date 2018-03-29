@@ -53,10 +53,10 @@ $dark: $zooblue4;
 //$body-bg: #d3e9eb;
 $body-color: $zooblue4;
 
-// Adding (!) an additional theme color (ex. classes btn-cool, bg-cool)
-//$theme-colors: (
-//  "cool": #4d3fa3
-//);
+// Additional theme colors
+$theme-colors: (
+  "highlight": $zooyellow2
+);
 
 
 // - - - - - - - - - - - - - -

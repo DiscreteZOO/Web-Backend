@@ -1,0 +1,113 @@
+- import xyz.discretezoo.web.app.controller.Snippets._
+-@ val body: String
+
+- def meta(name: String, content: String) =
+    meta{:name => name, :content => content}
+- def stylesheet(href: String) =
+    link{:rel => "stylesheet", :href => href}
+- def icon(rel: String, imageType: String, sizes: String, href: String) =
+    link{:rel => rel, :type => imageType, :sizes => sizes, :href => href}
+- def script(src: String, integrity: String) =
+    script(defer){:src => src, :integrity => integrity, :crossorigin => "anonymous"}
+
+!!! 5
+html(lang='en')
+
+    head
+
+        title Discrete Zoo
+        meta{:charset => "utf-8"}
+        - meta("viewport", "width=device-width, initial-scale=1, shrink-to-fit=no")
+        - meta("apple-mobile-web-app-title", "Discrete ZOO")
+        - meta("application-name", "Discrete ZOO")
+        - meta("msapplication-TileColor", "#da532c")
+        - meta("theme-color", "#ffffff")
+
+        - stylesheet("css/zoo.min.css")
+        - stylesheet("https://fonts.googleapis.com/css?family=Cormorant+Garamond|Cormorant+Unicase:600|Montserrat&amp;subset=latin-ext")
+
+        - icon("apple-touch-icon", "image/png", "180x180", "/apple-touch-icon.png?v=2")
+        - icon("icon", "image/png", "32x32", "/favicon-32x32.png?v=2")
+        - icon("icon", "image/png", "16x16", "/favicon-16x16.png?v=2")
+
+        link{:rel => "manifest", :href => "/site.webmanifest?v=2"}
+        link{:rel => "mask-icon", :href => "/safari-pinned-tab.svg?v=2", :color => "#ef6d4b"}
+        link{:rel => "shortcut icon", :href => "/favicon.ico?v=2"}
+
+        - stylesheet("../intro.js-2.7.0/introjs.css")
+
+    body
+
+        nav.navbar.navbar-expand-lg.navbar-light.bg-light
+
+            button.navbar-toggler.navbar-toggler-right{
+              :type => "button",
+              "data-toggle" => "collapse",
+              "data-target" => "#navbarTogglerDemo03",
+              "aria-controls" => "navbarTogglerDemo03",
+              "aria-expanded" => "false",
+              "aria-label" => "Toggle navigation"}
+
+                span.navbar-toggler-icon
+
+            #brand.intro-toggle.collapse
+                a.navbar-brand{:href => "#!"}
+                    img{:src => "../img/logo.svg"}
+
+            .navbar-collapse.collapse.w-100.order-3.dual-collapse2
+                ul.navbar-nav.ml-auto
+                    li#intro-control.nav-item
+                        = introToggle("a", ("class", "nav-link carets"))
+                            != "Introduction <i> </i>"
+                    li.nav-item
+                        a.nav-link{:href => "#!"} About
+                    li.nav-item
+                        a.nav-link.icon-link{:href => "#!"}
+                            i.fab.fa-github{"data-fa-transform" => "grow-8"}
+
+            #message
+                #loading Loading
+
+        main{:role => "main"}
+
+            header#introduction.intro-toggle.show
+                .container.jumbotron
+                    .row.justify-content-center
+                        .col-lg-8.text-center
+                            = introToggle("button", ("class", "close"))
+                                span{"aria-hidden" => "true"} &#215;
+                            p
+                                img{:src => "../img/logo.svg", :width => "40%"}
+                            p.small.text-muted A repository of discrete objects
+                            p.lead.mt-4
+                                | Various censuses of graphs and other objects exist on the web, and DiscreteZOO aims to
+                                | give them a common home and to make them easily accessible and searchable.
+                            hr.my-4
+                            p.small.text-muted
+                                = introToggle("a")
+                                    | Try it
+                                | out or take a short guided tour.
+                            p
+                                = introToggle("a", ("class", "btn btn-highlight btn-lg"), ("onclick", "startIntro();"))
+                                    | Start tour
+
+
+            != body
+
+            footer.bg-dark
+                .container
+                    .row
+                        .col-lg-4.my-5.text-white
+                            #licence
+                                a.icon-link.fa-2x.fa-pull-left{
+                                  :href => "https://creativecommons.org/licenses/by/4.0/"}
+                                    i.fab.fa-creative-commons
+                                p This work is licensed under a Creative Commons Attribution 4.0 International License
+                        .col-lg-4.my-5.text-white
+                        .col-lg-4.my-5.text-white
+                            h2 Contact
+
+        - script("https://code.jquery.com/jquery-3.2.1.slim.min.js", "sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN")
+        - script("https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js", "sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q")
+        - script("https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js", "sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl")
+        - script("https://use.fontawesome.com/releases/v5.0.8/js/all.js", "sha384-SlE991lGASHoBfWbelyBPLsUlwY1GwNDJo3jSJO04KZ33K2bwfV9YBauFfnzvynJ")
