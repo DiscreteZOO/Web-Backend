@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+    <title>Discrete ZOO</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="css/zoo.min.css"> <!-- Customized bootstrap -->
+    <link href="https://fonts.googleapis.com/css?family=Cormorant+Garamond|Cormorant+Unicase:600|Montserrat&amp;subset=latin-ext" rel="stylesheet">
+    <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js" integrity="sha384-SlE991lGASHoBfWbelyBPLsUlwY1GwNDJo3jSJO04KZ33K2bwfV9YBauFfnzvynJ" crossorigin="anonymous"></script>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=2">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=2">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=2">
+    <link rel="manifest" href="/site.webmanifest?v=2">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg?v=2" color="#ef6d4b">
+    <link rel="shortcut icon" href="/favicon.ico?v=2">
+    <meta name="apple-mobile-web-app-title" content="Discrete ZOO">
+    <meta name="application-name" content="Discrete ZOO">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+
+    <link href="../intro.js-2.7.0/introjs.css" rel="stylesheet">
+
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+            data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03"
+            aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="intro-toggle collapse" id="brand"><a class="navbar-brand" href="#!"><img src="../img/logo.svg"></a></div>
+    <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link carets" data-toggle="collapse" href=".intro-toggle" role="button" aria-expanded="true" aria-controls="introduction brand">
+                    Introduction <i> </i>
+                </a>
+            </li>
+            <li class="nav-item"><a class="nav-link" href="#!">About</a></li>
+            <li class="nav-item"><a class="nav-link icon-link" href="#!"><i class="fab fa-github" data-fa-transform="grow-8"></i></a></li>
+        </ul>
+    </div>
+    <div id="message">
+        <div id="loading">Loading</div>
+    </div>
+</nav>
+
+<main role="main">
+
+    <header id="introduction" class="intro-toggle show">
+        <div class="container jumbotron">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <button type="button" class="close" aria-label="Close" data-toggle="collapse" data-target=".intro-toggle" role="button" aria-expanded="true" aria-controls="introduction brand">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <p><img src="../img/logo.svg" width="40%"></p>
+                    <p class="small text-muted">A repository of discrete objects</p>
+                    <p class="lead mt-4">Various censuses of graphs and other objects exist on the web, and DiscreteZOO aims to give them a common home and to make them easily accessible and searchable.</p>
+                    <hr class="my-4">
+                    <p class="small text-muted"><a href=".intro-toggle" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="introduction brand">Try it</a> out or take a short guided tour.</p>
+                    <p><a class="btn btn-highlight btn-lg" href=".intro-toggle" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="introduction brand" role="button" href="javascript:void(0);" onclick="startIntro();">Start tour</a></p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="bg-primary" id="search">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mx-auto my-4 text-center" id="select-type">
+                    <h2 class="section-heading text-white" id="step2">Search</h2>
+                    <div class="btn-group-vertical btn-group-toggle" data-toggle="buttons">
+                        <label class="btn btn-secondary active">
+                            <input type="radio" name="options" id="option1" autocomplete="off" checked>
+                            Automata
+                            <a href="#!" class="type-info">
+                                <i class="far fa-question-circle" data-fa-transform="shrink-4 up-3"></i>
+                            </a>
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="options" id="option3" autocomplete="off">
+                            Maniplexes
+                            <a href="#!" class="type-info">
+                                <i class="far fa-question-circle" data-fa-transform="shrink-4 up-3"></i>
+                            </a>
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="options" id="option2" autocomplete="off">
+                            Symmetric graphs
+                            <a href="#!" class="type-info">
+                                <i class="far fa-question-circle" data-fa-transform="shrink-4 up-3"></i>
+                            </a>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-lg-4 mx-auto my-4 text-center">
+                    <p>Collections</p>
+                </div>
+                <div class="col-lg-4 mx-auto my-4 text-center">
+                    <p>Filters</p>
+                </div>
+            </div>
+            <hr class="my-2">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-white">
+                    <p>Objects found: <i>12345</i>.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-dark" id="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 my-5 text-white">
+                    <div id="licence">
+                        <a class="icon-link fa-2x fa-pull-left" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons"></i></a>
+                        <p>This work is licensed under a Creative Commons Attribution 4.0 International License</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 my-5 text-white">
+
+                </div>
+                <div class="col-lg-4 my-5 text-white">
+                    <h2>Contact</h2>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</main>
+
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<script src="../intro.js-2.7.0/intro.js" rel="stylesheet"></script>
+<script type="text/javascript">
+  function startIntro(){
+    var options = {
+        'showStepNumbers': 'false',
+        'showBullets': 'false',
+        'nextLabel': "&rarr;",
+        'prevLabel': "&larr;"
+    }
+    var intro = introJs().setOptions(options);
+      intro.setOptions({
+        steps: [
+          {
+            element: '#intro-control',
+            intro: "Hide or show the introduction",
+            position: 'bottom'
+          },
+          {
+            element: '#select-type',
+            intro: "Choose your favourite objects",
+            position: 'right'
+          },
+          {
+            element: '.type-info',
+            intro: "More information",
+            position: 'right'
+          }
+        ]
+      });
+      intro.start();
+  }
+</script>
+
+</body>
+</html>
