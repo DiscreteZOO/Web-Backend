@@ -1,5 +1,5 @@
 package xyz.discretezoo.web.db
 
-class Property {
-
+case class Property(name: String, kind: String) {
+  def displayName: String = name.replace('_', ' ')
 }
