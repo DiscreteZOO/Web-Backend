@@ -45,6 +45,7 @@ object ZooDB {
       case "VT" => "vt_index"
       case "CVT" => "cvt_index"
       case "CAT" => "symcubic_index"
+      case "M2" => "\"UUID\""  // TODO: temporary
     }).map(c => s"($c IS NOT NULL)").mkString(" OR ")
     val actualFilters = filters ++ Seq(collectionFilters)
     if (actualFilters.nonEmpty) s"WHERE ${actualFilters.map(f => s"($f)").mkString(" AND ")}" else ""
@@ -72,13 +73,44 @@ object ZooDB {
     result
   }
 
-  def countResults(collections: Seq[String], filters: Seq[String]): Int = {
+  def getManiplexes(collections: Seq[String], filters: Seq[String], limit: Int, order: Seq[OrderBy], page: Int): Seq[ManiplexAllColumns] = {
+    val offset = (page - 1) * limit
+    def orderBy: String = {
+      val columns = order.flatMap(_.toSQL).mkString(",")
+      if (columns.nonEmpty) s"ORDER BY $columns" else ""
+    }
+    val db = connect
+    val q = sql"""
+         SELECT "ORBITS", "SMALL_GROUP_ORDER", "IS_POLYTOPE", "IS_REGULAR", "SYMMETRY_TYPE" FROM maniplexes
+         #${getWhere(collections, filters)}
+         #$orderBy
+         LIMIT #$limit OFFSET #$offset;
+       """.as[ManiplexAllColumns]
+    val f: Future[Seq[ManiplexAllColumns]] = db.run(q)
+    val result = Await.result(f, Duration("Inf"))
+    db.close()
+    result
+  }
+
+  def countGraphs(collections: Seq[String], filters: Seq[String]): Int = {
     val db = connect
     val q = sql"""
          SELECT COUNT(graph.zooid) FROM graph
          LEFT JOIN graph_cvt ON graph.zooid = graph_cvt.zooid
          LEFT JOIN graph_spx ON graph.zooid = graph_spx.zooid
          LEFT JOIN graph_vt ON graph.zooid = graph_vt.zooid
+         #${getWhere(collections, filters)};
+       """.as[Int]
+    val f: Future[Seq[Int]] = db.run(q)
+    val result = Await.result(f, Duration("Inf")).head
+    db.close()
+    result
+  }
+
+  def countManiplexes(collections: Seq[String], filters: Seq[String]): Int = {
+    val db = connect
+    val q = sql"""
+         SELECT COUNT("UUID") FROM maniplexes
          #${getWhere(collections, filters)};
        """.as[Int]
     val f: Future[Seq[Int]] = db.run(q)
@@ -215,6 +247,44 @@ object ZooDB {
       GraphIndexColumns(r.<<, r.<<, r.<<),
       GraphBooleanColumns(r.<<, r.<<, r.<<, r.<<, r.<<, r.<<, r.<<, r.<<, r.<<, r.<<, r.<<, r.<<, r.<<, r.<<, r.<<, r.<<, r.<<, r.<<),
       GraphNumericColumns(r.<<, r.<<, r.<<, r.<<, r.<<, r.<<, r.<<, r.<<, r.<<, r.<<))
+  })
+
+  case class ManiplexNumericColumns(orbits: Int, smallGroupOrder: Int)
+  {
+    def toJSON: JObject = {
+      val json = ("ORBITS" -> orbits) ~ ("SMALL_GROUP_ORDER" -> smallGroupOrder)
+      json
+    }
+  }
+
+  case class ManiplexBoolColumns(isPolytope: Boolean, isRegular: Boolean)
+  {
+    def toJSON: JObject = {
+      val json = ("IS_POLYTOPE" -> isPolytope) ~ ("IS_REGULAR" -> isRegular)
+      json
+    }
+  }
+
+  case class ManiplexStringColumns(symmetryType: String)
+  {
+    def toJSON: JObject = {
+      val json = "SYMMETRY_TYPE" -> symmetryType
+      json
+    }
+  }
+
+  case class ManiplexAllColumns(numeric: ManiplexNumericColumns, bool: ManiplexBoolColumns, string: ManiplexStringColumns) {
+    def toJSON: JObject = {
+      val json = ("bool" -> bool.toJSON) ~ ("numeric" -> numeric.toJSON) ~ ("string" -> string.toJSON)
+      json
+    }
+  }
+
+  implicit val getManiplexResult: GetResult[ManiplexAllColumns] = GetResult(r => {
+    ManiplexAllColumns(
+      ManiplexNumericColumns(r.<<, r.<<),
+      ManiplexBoolColumns(r.<<, r.<<),
+      ManiplexStringColumns(r.<<))
   })
 
 }

@@ -16,8 +16,7 @@ libraryDependencies ++= Seq(
   "org.scalatra" %% "scalatra-scalate" % ScalatraVersion,
   "org.scalatra" %% "scalatra-json" % ScalatraVersion,
   "org.json4s" %% "json4s-jackson" % "3.5.2",
-  "ch.qos.logback" % "logback-classic" % "1.2.3" % "runtime",
-  "org.eclipse.jetty" % "jetty-webapp" % "9.4.8.v20171121" % "container",
+  "org.eclipse.jetty" % "jetty-webapp" % "9.4.8.v20171121" % "container;compile", // container for regular use
   "javax.servlet" % "javax.servlet-api" % "3.1.0" % "provided",
 
   // slick dependencies

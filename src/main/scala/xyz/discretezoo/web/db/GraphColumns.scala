@@ -23,6 +23,7 @@ object GraphColumns {
     (isValidBoolColumnName(p._1) && isBoolValue(p._2)) || (isValidIntColumnName(p._1) && isNumericCondition(p._2))
   }
 
+  // assumes valid conditions
   def queryCondition(p: (String, String)): String = {
     val escapedColumnName = s""""${p._1}""""
     if (isValidBoolColumnName(p._1))
