@@ -1,24 +1,20 @@
-val ScalatraVersion = "2.6.3"
+name := "ZooApp"
+
+version := "1.1.0-SNAPSHOT"
 
 organization := "xyz.discretezoo"
 
-name := "ZooApp"
-
-version := "0.1.0-SNAPSHOT"
-
 scalaVersion := "2.12.4"
 
-resolvers += Classpaths.typesafeReleases
+resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 
 libraryDependencies ++= Seq(
-  "org.scalatra" %% "scalatra" % ScalatraVersion,
-  "org.scalatra" %% "scalatra-scalatest" % ScalatraVersion % "test",
-  "org.scalatra" %% "scalatra-scalate" % ScalatraVersion,
-  "org.scalatra" %% "scalatra-json" % ScalatraVersion,
-  "org.json4s" %% "json4s-jackson" % "3.5.2",
-  "org.eclipse.jetty" % "jetty-webapp" % "9.4.8.v20171121" % "container;compile", // container for regular use
-  "javax.servlet" % "javax.servlet-api" % "3.1.0" % "provided",
-
+  "com.typesafe.akka" %% "akka-http"   % "10.1.5",
+  "com.typesafe.akka" %% "akka-actor" % "2.5.18",
+  "com.typesafe.akka" %% "akka-testkit" % "2.5.18" % Test,
+  "com.typesafe.akka" %% "akka-stream" % "2.5.18",
+  "com.typesafe.akka" %% "akka-stream-testkit" % "2.5.18" % Test,
+  "com.typesafe.akka" %% "akka-http-spray-json" % "10.1.5",
   // slick dependencies
   "com.typesafe.slick" %% "slick" % "3.2.3",
   "org.slf4j" % "slf4j-nop" % "1.6.4",
@@ -27,5 +23,3 @@ libraryDependencies ++= Seq(
   // arrays for slick
   "com.github.tminglei" %% "slick-pg" % "0.16.2"
 )
-
-enablePlugins(ScalatraPlugin)
