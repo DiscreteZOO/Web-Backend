@@ -43,12 +43,10 @@ aria-expanded="false" aria-label="Toggle navigation">
 				Introduction <i> </i>
 			</a>
 		</li>
-		<li class="nav-item"><a class="nav-link" href="#!">About</a></li>
 		<li class="nav-item"><a class="nav-link icon-link" href="#!"><i class="fab fa-github" data-fa-transform="grow-8"></i></a></li>
 	</ul>
 </div>
 <div id="message">
-	<div id="loading">Loading</div>
 </div>
 </nav>
 
@@ -64,9 +62,6 @@ aria-expanded="false" aria-label="Toggle navigation">
 	<p><img src="img/logo.svg" width="40%"></p>
 		<p class="small text-muted">A repository of discrete objects</p>
 		<p class="lead mt-4">Various censuses of graphs and other objects exist on the web, and DiscreteZOO aims to give them a common home and to make them easily accessible and searchable.</p>
-		<hr class="my-4">
-			<p class="small text-muted"><a href=".intro-toggle" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="introduction brand">Try it</a> out or take a short guided tour.</p>
-			<p><a class="btn btn-highlight btn-lg" href=".intro-toggle" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="introduction brand" role="button" href="javascript:void(0);" onclick="startIntro();">Start tour</a></p>
 		</div>
 	</div>
 </div>
@@ -81,12 +76,10 @@ aria-expanded="false" aria-label="Toggle navigation">
 		<label class="btn btn-secondary zoo-radio-objects" v-bind:class="{ focus: objects === 'graphs' }" id="graphs">
 			<input type="radio" name="objects" value="graphs" autocomplete="off" v-model="objects">
 				Graphs
-				<a href="#!" class="type-info"><i class="far fa-question-circle" data-fa-transform="shrink-4 up-3"></i></a>
 			</label>
 			<label class="btn btn-secondary zoo-radio-objects" v-bind:class="{ focus: objects === 'maniplexes' }" id="maniplexes">
 				<input type="radio" name="objects" value="maniplexes" autocomplete="off" v-model="objects">
 					Maniplexes
-					<a href="#!" class="type-info"><i class="far fa-question-circle" data-fa-transform="shrink-4 up-3"></i></a>
 				</label>
 			</div>
 			<div class="mx-auto my-4" id="zoo-message">
@@ -106,10 +99,7 @@ aria-expanded="false" aria-label="Toggle navigation">
 					<ul class="fa-ul" v-if="filters[objects].selected.length > 0">
 						<li v-for="f in filters[objects].selected" v-bind:class="{ edit: f.edit }">
 							<i v-if="!f.edit && f.value == 'false'">not </i>
-							{{propertyName(f)}}
-							<a href="#!" class="filter-info">
-								<i class="far fa-question-circle" data-fa-transform="shrink-4 up-3"></i>
-							</a>
+							{{f.display}}
 							<i v-if="!f.edit && f.type == 'numeric'" class="zoo-numeric-condition-display">{{f.value}} </i>
 
 
@@ -139,8 +129,7 @@ aria-expanded="false" aria-label="Toggle navigation">
 							<div class="zoo-filter-box">
 								<ul class="fa-ul">
 									<li v-for="f in filters[objects].available" v-on:click="addFilterToSelected(f.name)">
-										<span class="fa-li"><i class="fas fa-plus"></i></span> {{propertyName(f)}}
-										<a href="#!" class="filter-info"><i class="far fa-question-circle" data-fa-transform="shrink-4 up-3"></i></a>
+										<span class="fa-li"><i class="fas fa-plus"></i></span> {{f.display}}
 									</li>
 								</ul>
 							</div>
@@ -164,7 +153,7 @@ aria-expanded="false" aria-label="Toggle navigation">
 								<select class="zoo-order-select" v-model="resultsOrderBy1.column">
 									<option selected value="none"><i>choose a column</i></option>
 									<option disabled></option>
-									<option v-for="c in columns[objects][columns[objects].columnSet]" v-bind:value="c.name">{{propertyName(c)}}</option>
+									<option v-for="c in columns[objects][columns[objects].columnSet]" v-bind:value="c.name">{{c.display}}</option>
 								</select>
 								<button type="button" class="btn btn-light btn-sm" v-on:click="toggleOrder('resultsOrderBy1');">
 									<span v-if="resultsOrderBy1.order == 'ASC'">ascending</span>
@@ -174,7 +163,7 @@ aria-expanded="false" aria-label="Toggle navigation">
 								<select class="zoo-order-select" v-model="resultsOrderBy2.column" :disabled="resultsOrderBy1.column == 'none'">
 									<option selected value="none"><i>choose a column</i></option>
 									<option disabled></option>
-									<option v-for="c in columns[objects][columns[objects].columnSet]" v-bind:value="c.name">{{propertyName(c)}}</option>
+									<option v-for="c in columns[objects][columns[objects].columnSet]" v-bind:value="c.name">{{c.display}}</option>
 								</select>
 								<button type="button" class="btn btn-light btn-sm" v-on:click="toggleOrder('resultsOrderBy2');">
 									<span v-if="resultsOrderBy2.order == 'ASC'">ascending</span>
@@ -188,14 +177,14 @@ aria-expanded="false" aria-label="Toggle navigation">
 								<thead>
 									<tr>
 										<th scope="col" v-for="c in columns[objects][columns[objects].columnSet]">
-										{{propertyName(c)}}
+										{{c.display}}
 										</th>
 									</tr>
 								</thead>
 								<tbody>
 									<tr v-for="r in results.data">
 									<td v-for="c in columns[objects][columns[objects].columnSet]">
-										{{r[c.type][c.name]}}
+										{{displayValue(r, c.type, c.name)}}
 									</td>
 									</tr>
 								</tbody>
@@ -267,7 +256,6 @@ aria-expanded="false" aria-label="Toggle navigation">
 
 					</div>
 					<div class="col-lg-4 my-5 text-white">
-						<h2>Contact</h2>
 					</div>
 				</div>
 			</div>
