@@ -1,0 +1,12 @@
+
+ GENERAL NOTES
+
+
+To start: run `yarn start` in the app folder (`zoo`).
+
+React
+hackernoon.com/simple-react-development-in-2017-113bd563691f
+
+Fontawesome
+https://scotch.io/tutorials/using-font-awesome-5-with-react
+https://fontawesome.com/how-to-use/on-the-web/using-with/react
