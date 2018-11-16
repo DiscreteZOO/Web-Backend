@@ -48,20 +48,26 @@
 
 .zoo-filter-box { display: block; height: 200px; overflow: auto; }
 .zoo-filter-box .fa-ul { margin-left: 0px; }
-.zoo-filter-box .fa-li { left: 0; top: 0.6em; }
+.zoo-filter-box li .fa-li { left: 0; top: 0.6em; }
+.zoo-filter-box li .fa-li { visibility: hidden; }
+.zoo-filter-box li:hover .fa-li { visibility: visible; }
 .zoo-filter-box .fa-ul li { color: #19717F; padding: 0.5em 2em; border-bottom: 1px solid #ccc; }
-.zoo-filter-box .fa-ul li:nth-child(odd) { background-color: rgba(25, 113, 127, 0.05); }
 .zoo-filter-box .fa-ul li:last-child { border-bottom: 0px; }
-.zoo-filter-box .fa-ul li:hover { color: #1AB380; background-color: rgba(26, 179, 128, 0.1); }
 .zoo-filter-box .small { font-size: 0.7em; position: absolute; right: 1.5em; top: 1.2em; }
 .zoo-filter-box .zoo-numeric-condition-display { font-family: Montserrat, sans-serif; }
-#zoo-selected-filters .zoo-filter-box .fa-ul li { padding: 0.5em 0.6em; }
-#zoo-selected-filters .zoo-filter-box input { margin-left: 0.3em; width: 100px; font-family: Montserrat, sans-serif;  }
+
+.zoo-filter-box .fa-ul li:nth-child(odd) { background-color: rgba(25, 113, 127, 0.05); }
+#zoo-choose-filters .zoo-filter-box .fa-ul li:hover { background-color: rgba(23, 159, 82, 0.1); }
+#zoo-selected-filters .zoo-filter-box .fa-ul li:hover { background-color: rgba(223, 135, 33, 0.1); }
+#zoo-selected-filters .zoo-filter-box li.edit { background-color: rgba(172, 48, 15, 0.05); }
+
+#zoo-selected-filters .zoo-filter-box .fa-ul li { padding-left: 1em; }
+#zoo-selected-filters .zoo-filter-box input
+    { margin-left: 0.3em; width: 100px; font-family: Montserrat, sans-serif; background-color: #ffffff; }
 #zoo-selected-filters .zoo-filter-box .zoo-bool-filter { margin-left: 0.5em; }
 #zoo-selected-filters .zoo-filter-box li .done-button,
-#zoo-selected-filters .zoo-filter-box li .remove-button { display: none; }
+#zoo-selected-filters .zoo-filter-box li .remove-button { display: none; margin-left: 1em; }
 #zoo-selected-filters .zoo-filter-box li .edit-button { display: block; }
-#zoo-selected-filters .zoo-filter-box li.edit { color: #b34f1a; background-color: rgba(179, 79, 26, 0.05); }
 #zoo-selected-filters .zoo-filter-box li.edit .done-button,
 #zoo-selected-filters .zoo-filter-box li.edit .remove-button { display: inline; }
 #zoo-selected-filters .zoo-filter-box li.edit .edit-button { display: none }
