@@ -8,6 +8,9 @@ import akka.http.scaladsl.server.Directives
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
 import spray.json.DefaultJsonProtocol
+import akka.http.scaladsl.model.HttpEntity
+import akka.http.scaladsl.model.MediaTypes.`application/json`
+import akka.http.scaladsl.model.headers.RawHeader
 
 import scala.io.StdIn
 
@@ -28,8 +31,13 @@ object WebServer extends Directives with JsonSupport {
       } ~
         get {
           pathSingleSlash {
-            complete(Item(Some(0), 42)) // will render as JSON
-          }
+            respondWithHeaders(RawHeader("Access-Control-Allow-Origin", "http://localhost:3000")) {
+              complete(Item(Some(3), 42))
+//            respondWithHeaders(RawHeader("Access-Control-Allow-Origin", "http://localhost:3000")) {
+//              complete("beep")
+//            complete(HttpResponse(StatusCodes.OK, Seq(allowAccess), entity = HttpEntity(ContentType(MediaTypes.`application/json`), """{"id":"1"}"""))) // will render as JSON
+//             complete(Item("thing", 42)) // will render as JSON
+          } }
         } ~
         post {
           entity(as[Order]) { order => // will unmarshal JSON to Order
