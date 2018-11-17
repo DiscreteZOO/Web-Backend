@@ -55,22 +55,83 @@ const dataCollections = {
     maniplexes: {}
 }
 
+const getCollectionsKeys = (objects) => {
+    if (objects === null) return [];
+    else return Object.keys(dataCollections[objects]);
+}
+
 class ZooSearch extends Component {
     
+    constructor(props) {
+        super(props);
+        this.state = {
+            objects: null,
+        };
+    }
+    
+    chooseObjects(newChosenObjects) {
+        const previousChosenObjects = this.state.objects;
+        if (newChosenObjects == previousChosenObjects) { return; }
+        
+        console.log("chose objects: " + newChosenObjects);
+        
+        var newState = {
+            objects: newChosenObjects,
+            collections: getCollectionsKeys(newChosenObjects),
+            selectedFilters: "",
+            counter: 12345
+        }
+        
+        this.setState(newState);
+    }
+    
+    toggleCollection(c) {
+        var result = {};
+        var newList = this.state.collections.slice(0); // clone
+        var i = newList.indexOf(c);
+            
+        if (i > -1) newList.splice(i, 1);
+        else newList.push(c);
+
+        this.setState({collections: newList});
+    }
+    
+    objectCount() {
+//        var queryParameters = [];
+//        console.log(this.props.)
+//        queryParameters.push({ name: "collections", value: JSON.stringify(zooapp.collections[zooapp.objects].selected) });
+//        var parameters = zooapp.filters[zooapp.objects].selected.concat(queryParameters);
+//        $.get("/search/object-count", parameters, function(data) {
+//            zooapp.objectCount = data;
+//        });
+        console.log("counting...")
+    }
+    
     render() {
-        const s = this.props.state;
         return (
             <section className="bg-primary" id="search">
                 <Container id="zoo-search-box">
                     <Row>
                         <Col lg="3" md="3" sm="12" className="mx-auto my-4" id="select-type">
                             <h2 className="section-heading text-white" id="step2">Search</h2>
-                            <ZooChooseObjects 
-                                callbacks={this.props.callbacks}
-                                objects={s.objects} />
+                            <ZooChooseObjects
+                                objects={this.state.objects}
+                                collections={this.state.collections}
+                                chooseObjects={(o) => this.chooseObjects(o)}
+                                toggleCollection={(c) => this.toggleCollection(c)} />
                         </Col>
-                        <ZooFilters objects={s.objects} />
+                        <ZooFilters objects={this.state.objects} />
                     </Row>
+                    { !(this.state.objects === null) &&
+                        <React.Fragment>
+                            <hr className="my-2" />
+                            <Row>
+                                <Col lg="8" className="text-white">
+                                    <p><Button className="mr-3" onClick={this.objectCount}>Display results</Button> Objects found: <i>{this.state.counter}</i>.</p>
+                                </Col>
+                            </Row>
+                        </React.Fragment>
+                    }
                 </Container>
             </section>
         );
@@ -88,7 +149,7 @@ class ZooChooseObjects extends Component {
             // default color="secondary"
             <Button
                 className={"zoo-radio-objects" + (this.props.objects == value ? " focus" : "")}
-                onClick={() => this.props.callbacks.chooseObjects(value)}>
+                onClick={() => this.props.chooseObjects(value)}>
                 {label} <ZooInfoButton value="type" />
             </Button>
         );
@@ -102,7 +163,12 @@ class ZooChooseObjects extends Component {
                     {this.renderButton("maniplexes", "Maniplexes")}
                 </ButtonGroup>
                 <div className="mx-auto my-4">
-                    {!(this.props.objects === null) && <ZooChooseCollections collections={dataCollections[this.props.objects]} />}
+                    {!(this.props.objects === null) &&
+                        <ZooChooseCollections
+                            objects={this.props.objects}
+                            collections={this.props.collections}
+                            toggle={(c) => this.props.toggleCollection(c)} />
+                    }
                 </div>
             </React.Fragment>
         );
@@ -114,39 +180,24 @@ class ZooChooseObjects extends Component {
  * * * * * * * * * * * * * * * * * * * * * * * * */
 class ZooChooseCollections extends Component {
     
-    constructor(props) {
-        super(props);
-        this.availableCollectionsKeys = Object.keys(this.props.collections);
-        this.state = { collections: this.availableCollectionsKeys };
-    }
-    
     renderCollection(c) {
-        const isChecked = this.state.collections.indexOf(c.id) > -1;
+        const isChecked = this.props.collections.indexOf(c.id) > -1;
         return (
-            <Label check key={c.id} className="text-white" onClick={() => this.chooseCollections(c.id)}>
+            <Label check key={c.id} className="text-white" onClick={() => this.props.toggle(c.id)}>
                 <Input type="checkbox" defaultChecked={isChecked} /> {c.name}
             </Label>
         );
     }
 
-    chooseCollections(c) {
-        var result = {};
-        var newList = this.state.collections.slice(0); // clone
-        var i = newList.indexOf(c);
-            
-        if (i > -1) newList.splice(i, 1);
-        else newList.push(c);
-
-        this.setState({collections: newList});
-    }
-
     render() {
-        if (this.props.isClean) { return <p className="text-white">Choose a type of objects to start.</p>; }
-        if (this.availableCollectionsKeys.length > 0) {
+        console.log("rendering collections for " + this.props.objects);
+        var availableCollectionsKeys = getCollectionsKeys(this.props.objects)
+        if (this.props.objects === null) { return <p className="text-white">Choose a type of objects to start.</p>; }
+        if (availableCollectionsKeys.length > 0) {
             return(
                 <FormGroup check>
-                    {this.availableCollectionsKeys.map((key) => {
-                        return this.renderCollection(this.props.collections[key]);
+                    {availableCollectionsKeys.map((key) => {
+                        return this.renderCollection(dataCollections[this.props.objects][key]);
                     })}
                 </FormGroup>
             );
@@ -292,7 +343,6 @@ class SelectedFilter extends Component {
             valueValid = /^(=|<=|>=|<|>|<>|!=)(\d+\.?\d*)$/.test(this.state.value.replace(/ /g, ''))
         }
         if (valueValid) {
-            console.log("valid value is: " + this.state.value)
             this.setState({ edit: false });
             this.props.onDoneEditing(this.state.value);
         }

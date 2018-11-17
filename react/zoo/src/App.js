@@ -8,28 +8,11 @@ import ReactDOM from 'react-dom'
 
 class ZooApp extends Component {
     
-    constructor(props) {
-        super(props);
-        this.state = initialGlobalState;
-    }
-    
-    chooseObjects(newChosenObjects) {
-        const previousChosenObjects = this.state.objects;
-        if (newChosenObjects == previousChosenObjects) { return; }
-        this.setState({ objects: newChosenObjects });
-    }
-    
     render() {
-        
-        const searchCallbacks = {
-            log: (message) => console.log(message),
-            chooseObjects: (objects) => this.chooseObjects(objects)
-        }
-        
         return(
             <React.Fragment>
                 <ZooHeader />
-                <ZooSearch callbacks={searchCallbacks} state={this.state} />
+                <ZooSearch />
                 <ZooFooter />
             </React.Fragment>
         );
