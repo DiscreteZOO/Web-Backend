@@ -72,6 +72,50 @@ class ZooSearch extends Component {
         };
     }
     
+    componentDidUpdate(pp, ps) {
+        function sortedKeys(o) {
+            const keys = Object.keys(o);
+            const sorted = keys.sort();
+            const filtered = sorted.filter((f) => !(o[f] === null))
+            return filtered;
+        }
+        const s = this.state
+        const objectsCollectionsUpdate = (s.objects != ps.objects) || (s.collections != ps.collections);
+        const filters = JSON.parse(s.selectedFilters);
+        const keys = sortedKeys(filters);
+        var selectedFiltersUpdate = false;
+        
+        if (s.selectedFilters != ps.selectedFilters) {
+            const prevFilters = JSON.parse(ps.selectedFilters);
+            const prevKeys = sortedKeys(prevFilters)
+            if (keys.length != prevKeys.length) {
+                selectedFiltersUpdate = true;
+            }
+            else {
+                var i = 0;
+                while (i < keys.length && !selectedFiltersUpdate) {
+                    if (keys[i] != prevKeys[i]) selectedFiltersUpdate = true;
+                    else if (filters[keys[i]] != prevFilters[keys[i]]) selectedFiltersUpdate = true;
+                    i++;
+                }
+            }
+        }
+        
+        if (objectsCollectionsUpdate || selectedFiltersUpdate) {
+            var queryFilters = {}
+            for (var i = 0; i < keys.length; i++) { queryFilters[keys[i]] = filters[keys[i]]; }
+            var queryJSON = {
+                objects: s.objects,
+                collections: s.collections,
+                selectedFilters: queryFilters
+            }
+            fetch('http://localhost:8080/')
+              .then(response => response.json())
+              .then(data => console.log({ data }));
+//            console.log(JSON.stringify(queryJSON));
+        }
+    }
+    
     chooseObjects(newChosenObjects) {
         const previousChosenObjects = this.state.objects;
         if (newChosenObjects == previousChosenObjects) { return; }
