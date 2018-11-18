@@ -2,55 +2,63 @@ package xyz.discretezoo.web
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
-import akka.http.scaladsl.model._
-import akka.http.scaladsl.server.Directives
-import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.{Directives, Route}
 import akka.stream.ActorMaterializer
-import spray.json.DefaultJsonProtocol
-import akka.http.scaladsl.model.HttpEntity
-import akka.http.scaladsl.model.MediaTypes.`application/json`
-import akka.http.scaladsl.model.headers.RawHeader
+import akka.http.scaladsl.model.headers._
+import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 
+import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
 import scala.io.StdIn
 
+import db.ZooDB._
+
 object WebServer extends Directives with JsonSupport {
+
   def main(args: Array[String]) {
 
-    implicit val system = ActorSystem("my-system")
-    implicit val materializer = ActorMaterializer()
+    implicit val system: ActorSystem = ActorSystem("ZooActors")
+    implicit val materializer: ActorMaterializer = ActorMaterializer()
     // needed for the future flatMap/onComplete in the end
-    implicit val executionContext = system.dispatcher
+    implicit val executionContext: ExecutionContext = system.dispatcher
 
-    val route = {
+    val correctOrigin = HttpOrigin("http://localhost:3000")
 
-      path("hello") {
-        get {
-          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Say hello to akka-http</h1>"))
+//    val requestHandler: HttpRequest => Future[HttpResponse] = {
+//      case HttpRequest(
+//        POST,
+//        Uri.Path("/"),
+//        _, // matches any headers
+//        _, // matches any HTTP entity (HTTP body)
+//        _  // matches any HTTP protocol
+//      ) => {
+//        val m = Marshal(User("Richard Imaoka", 120))
+//        m.to[HttpResponse]
+//      }
+//    }
+
+    lazy val routes: Route = cors() {
+      get {
+        pathSingleSlash {
+            complete(Item(Some(3), 42))
         }
-      } ~
-        get {
-          pathSingleSlash {
-            respondWithHeaders(RawHeader("Access-Control-Allow-Origin", "http://localhost:3000")) {
-              complete(Item(Some(3), 42))
-//            respondWithHeaders(RawHeader("Access-Control-Allow-Origin", "http://localhost:3000")) {
-//              complete("beep")
-//            complete(HttpResponse(StatusCodes.OK, Seq(allowAccess), entity = HttpEntity(ContentType(MediaTypes.`application/json`), """{"id":"1"}"""))) // will render as JSON
-//             complete(Item("thing", 42)) // will render as JSON
-          } }
-        } ~
-        post {
-          entity(as[Order]) { order => // will unmarshal JSON to Order
-            val itemsCount = order.items.size
-            val itemNames = order.items.map(_.name).mkString(", ")
-            complete(s"Ordered $itemsCount items: $itemNames")
+      }
+      post {
+        pathPrefix("count") {
+          path("graphs") {
+            entity(as[SearchParameters]) {
+              p => {
+                val count = countGraphs(p.collections, Seq())
+                println(p)
+                complete(Count(count))
+              }
+            }
           }
         }
+      }
 
     }
 
-
-    val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
+    val bindingFuture = Http().bindAndHandle(routes, "localhost", 8080)
 
     println(s"Server online at http://localhost:8080/\nPress RETURN to stop...")
     StdIn.readLine() // let it run until user presses return
@@ -58,7 +66,12 @@ object WebServer extends Directives with JsonSupport {
       .flatMap(_.unbind()) // trigger unbinding from the port
       .onComplete(_ => system.terminate()) // and shutdown when done
   }
+
 }
 
 final case class Item(name: Option[Int], id: Long)
 final case class Order(items: List[Item])
+final case class Count(value: Int)
+
+final case class SearchParameters(collections: List[String], filters: List[SearchFilter])
+final case class SearchFilter(name: String, value: String)

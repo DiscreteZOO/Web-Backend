@@ -15,6 +15,8 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-stream" % "2.5.18",
   "com.typesafe.akka" %% "akka-stream-testkit" % "2.5.18" % Test,
   "com.typesafe.akka" %% "akka-http-spray-json" % "10.1.5",
+  // cors
+  "ch.megard" %% "akka-http-cors" % "0.3.1",
   // slick dependencies
   "com.typesafe.slick" %% "slick" % "3.2.3",
   "org.slf4j" % "slf4j-nop" % "1.6.4",
