@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import ZooSearch from './ZooSearch';
+import ZooResults from './ZooResults';
 import initialGlobalState from './initial.js';
 import { Jumbotron, Container, Row, Col, Button } from 'reactstrap';
 
@@ -8,11 +9,17 @@ import ReactDOM from 'react-dom'
 
 class ZooApp extends Component {
     
+    constructor(props) {
+        super(props);
+        this.state = {results: null};
+        this.passResults = (results) => { this.setState({results: results}); }
+    }
+    
     render() {
         return(
             <React.Fragment>
-                <ZooHeader />
-                <ZooSearch />
+                <ZooSearch passResults={this.passResults} />
+                {!(this.state.results === null) && <ZooResults results={this.state.results}/>}
                 <ZooFooter />
             </React.Fragment>
         );

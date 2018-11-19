@@ -9,10 +9,13 @@ import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
 import scala.io.StdIn
-
 import db.ZooDB._
+import xyz.discretezoo.web.db.{GraphColumns, ZooDB}
 
 object WebServer extends Directives with JsonSupport {
+
+  private def maybeFilters(filters: Seq[SearchFilter]): Seq[String] =
+    filters.filter(GraphColumns.isValidQueryFilter).map(GraphColumns.queryCondition)
 
   def main(args: Array[String]) {
 
@@ -22,19 +25,6 @@ object WebServer extends Directives with JsonSupport {
     implicit val executionContext: ExecutionContext = system.dispatcher
 
     val correctOrigin = HttpOrigin("http://localhost:3000")
-
-//    val requestHandler: HttpRequest => Future[HttpResponse] = {
-//      case HttpRequest(
-//        POST,
-//        Uri.Path("/"),
-//        _, // matches any headers
-//        _, // matches any HTTP entity (HTTP body)
-//        _  // matches any HTTP protocol
-//      ) => {
-//        val m = Marshal(User("Richard Imaoka", 120))
-//        m.to[HttpResponse]
-//      }
-//    }
 
     lazy val routes: Route = cors() {
       get {
@@ -47,9 +37,24 @@ object WebServer extends Directives with JsonSupport {
           path("graphs") {
             entity(as[SearchParameters]) {
               p => {
-                val count = countGraphs(p.collections, Seq())
-                println(p)
+                val count = countGraphs(p.collections, maybeFilters(p.filters))
                 complete(Count(count))
+              }
+            }
+          }
+        } ~ pathPrefix("results") {
+          path("graphs") {
+            entity(as[SearchParameters]) {
+              p => {
+                val limit = 20
+                val filters = maybeFilters(p.filters)
+                val order = Seq()
+                val page = 1
+                val count = countGraphs(p.collections, filters)
+                val pages = (count / limit).ceil.toInt
+                val actualPage = if (page >= 1 && page <= pages) page else 1
+                val results = ZooDB.getGraphs(p.collections, filters, limit, order, actualPage)
+                complete(results)
               }
             }
           }

@@ -70,38 +70,19 @@ class ZooSearch extends Component {
             selectedFilters: "{}",
             counter: 0
         };
+        this.getResults = this.getResults.bind(this);
     }
     
     componentDidUpdate(pp, ps) {
-        function postData(url = ``, data = {}) {
-            return fetch(url, {
-                method: "POST",
-//                mode: "cors", // no-cors, cors, *same-origin
-//                cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-//                credentials: "same-origin", // include, *same-origin, omit
-                headers: { "Content-Type": "application/json; charset=utf-8" },
-//                redirect: "follow", // manual, *follow, error
-//                referrer: "no-referrer", // no-referrer, *client
-                body: JSON.stringify(data), // body data type must match "Content-Type" header
-            })
-            .then(response => response.json()); // parses response to JSON
-        }
-        
-        function sortedKeys(o) {
-            const keys = Object.keys(o);
-            const sorted = keys.sort();
-            const filtered = sorted.filter((f) => !(o[f] === null))
-            return filtered;
-        }
         const s = this.state
         const objectsCollectionsUpdate = (s.objects != ps.objects) || (s.collections != ps.collections);
         const filters = JSON.parse(s.selectedFilters);
-        const keys = sortedKeys(filters);
+        const keys = this.sortedKeys(filters);
         var selectedFiltersUpdate = false;
         
         if (s.selectedFilters != ps.selectedFilters) {
             const prevFilters = JSON.parse(ps.selectedFilters);
-            const prevKeys = sortedKeys(prevFilters)
+            const prevKeys = this.sortedKeys(prevFilters)
             if (keys.length != prevKeys.length) {
                 selectedFiltersUpdate = true;
             }
@@ -121,10 +102,31 @@ class ZooSearch extends Component {
                 collections: s.collections,
                 filters: queryFilters
             }
-            postData('http://localhost:8080/count/' + s.objects, queryJSON).then(data => {
+            this.postData('http://localhost:8080/count/' + s.objects, queryJSON).then(data => {
                 this.setState({counter: data.value})
             }).catch(error => console.error(error));
         }
+    }
+    
+    postData(url = ``, data = {}) {
+        return fetch(url, {
+            method: "POST",
+//                mode: "cors", // no-cors, cors, *same-origin
+//                cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+//                credentials: "same-origin", // include, *same-origin, omit
+            headers: { "Content-Type": "application/json; charset=utf-8" },
+//                redirect: "follow", // manual, *follow, error
+//                referrer: "no-referrer", // no-referrer, *client
+            body: JSON.stringify(data), // body data type must match "Content-Type" header
+        })
+        .then(response => response.json()); // parses response to JSON
+    }
+    
+    sortedKeys(o) {
+        const keys = Object.keys(o);
+        const sorted = keys.sort();
+        const filtered = sorted.filter((f) => !(o[f] === null))
+        return filtered;
     }
     
     chooseObjects(newChosenObjects) {
@@ -156,15 +158,18 @@ class ZooSearch extends Component {
         this.setState({selectedFilters: jsonString});
     }
     
-    objectCount() {
-//        var queryParameters = [];
-//        console.log(this.props.)
-//        queryParameters.push({ name: "collections", value: JSON.stringify(zooapp.collections[zooapp.objects].selected) });
-//        var parameters = zooapp.filters[zooapp.objects].selected.concat(queryParameters);
-//        $.get("/search/object-count", parameters, function(data) {
-//            zooapp.objectCount = data;
-//        });
-        console.log("counting...")
+    getResults() {
+        const s = this.state
+        const filters = JSON.parse(s.selectedFilters);
+        const keys = this.sortedKeys(filters);
+        var queryFilters = keys.map((k) => ({name: k, value: String(filters[k])}))
+        var queryJSON = {
+            collections: s.collections,
+            filters: queryFilters
+        }
+        this.postData('http://localhost:8080/results/' + s.objects, queryJSON).then(data => {
+            this.props.passResults(data);
+        }).catch(error => console.error(error));
     }
     
     render() {
@@ -190,7 +195,7 @@ class ZooSearch extends Component {
                             <hr className="my-2" />
                             <Row>
                                 <Col lg="8" className="text-white">
-                                    <p><Button className="mr-3" onClick={this.objectCount}>Display results</Button> Objects found: <i>{this.state.counter}</i>.</p>
+                                    <p><Button className="mr-3" onClick={this.getResults.bind(this)}>Display results</Button> Objects found: <i>{this.state.counter}</i>.</p>
                                 </Col>
                             </Row>
                         </React.Fragment>
