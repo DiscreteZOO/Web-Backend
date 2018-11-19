@@ -1,5 +1,7 @@
 package xyz.discretezoo.web.db
 
+import xyz.discretezoo.web.SearchFilter
+
 object GraphColumns {
 
   def getColumnList: String = all.map(p => s""""${p.name}"""").mkString(", ")
@@ -19,16 +21,16 @@ object GraphColumns {
     })
   }
 
-  def isValidQueryFilter(p: (String, String)): Boolean = {
-    (isValidBoolColumnName(p._1) && isBoolValue(p._2)) || (isValidIntColumnName(p._1) && isNumericCondition(p._2))
+  def isValidQueryFilter(p: SearchFilter): Boolean = {
+    (isValidBoolColumnName(p.name) && isBoolValue(p.value)) || (isValidIntColumnName(p.name) && isNumericCondition(p.value))
   }
 
   // assumes valid conditions
-  def queryCondition(p: (String, String)): String = {
-    val escapedColumnName = s""""${p._1}""""
-    if (isValidBoolColumnName(p._1))
-      (if (p._2 == "false") "NOT " else "") + escapedColumnName
-    else escapedColumnName + p._2.filter(_ > ' ')
+  def queryCondition(p: SearchFilter): String = {
+    val escapedColumnName = s""""${p.name}""""
+    if (isValidBoolColumnName(p.name))
+      (if (p.value == "false") "NOT " else "") + escapedColumnName
+    else escapedColumnName + p.value.filter(_ > ' ')
   }
 
   // CVT: "truncation"
