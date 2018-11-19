@@ -74,9 +74,8 @@ class ZooSearch extends Component {
     
     componentDidUpdate(pp, ps) {
         function postData(url = ``, data = {}) {
-          // Default options are marked with *
             return fetch(url, {
-                method: "POST", // *GET, POST, PUT, DELETE, etc.
+                method: "POST",
 //                mode: "cors", // no-cors, cors, *same-origin
 //                cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
 //                credentials: "same-origin", // include, *same-origin, omit
@@ -117,15 +116,11 @@ class ZooSearch extends Component {
         }
         
         if (objectsCollectionsUpdate || selectedFiltersUpdate) {
-            var queryFilters = keys.map((k) => ({name: k, value: "" + filters[k]}))
+            var queryFilters = keys.map((k) => ({name: k, value: String(filters[k])}))
             var queryJSON = {
                 collections: s.collections,
                 filters: queryFilters
             }
-//            fetch('http://localhost:8080/')
-//              .then(response => response.json())
-//              .then(data => console.log({ data }));
-//            console.log(queryJSON);
             postData('http://localhost:8080/count/' + s.objects, queryJSON).then(data => {
                 this.setState({counter: data.value})
             }).catch(error => console.error(error));
