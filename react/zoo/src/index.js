@@ -4,8 +4,8 @@ import ReactDOM from 'react-dom';
 import ZooApp from './App';
 import * as serviceWorker from './serviceWorker';
 
-ReactDOM.render(<ZooApp />, document.getElementById('zooapp'));
-const api = window.location.hostname === "localhost" ? "http://localhost:8080" : "https://api.discretezoo.xyz";
+const api = process.env.REACT_APP_ZOOAPI || (window.location.hostname === "localhost" ? "http://localhost:8080" : "https://api.discretezoo.xyz");
+ReactDOM.render(<ZooApp api={api} />, document.getElementById('zooapp'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

@@ -18,7 +18,7 @@ class ZooApp extends Component {
     render() {
         return(
             <React.Fragment>
-                <ZooSearch passResults={this.passResults} />
+                <ZooSearch passResults={this.passResults} api={this.props.api} />
                 {!(this.state.results === null) && <ZooResults results={this.state.results}/>}
                 <ZooFooter />
             </React.Fragment>
