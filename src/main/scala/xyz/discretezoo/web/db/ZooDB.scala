@@ -20,9 +20,9 @@ object ZooDB {
   private val graphsSPX: TableQuery[GraphsSPX] = TableQuery[GraphsSPX]
 
   private def connect: ZooPostgresProfile.backend.DatabaseDef = Database.forURL(
-    "jdbc:postgresql://localhost:5432/discretezoo2",
-    "discretezoo",
-    "D!screteZ00",
+    scala.util.Properties.envOrElse("ZOODB_JDBC", "jdbc:postgresql://localhost:5432/discretezoo2"),
+    scala.util.Properties.envOrElse("ZOODB_USER", "discretezoo"),
+    scala.util.Properties.envOrElse("ZOODB_PASS", "D!screteZ00"),
     null,
     "org.postgresql.Driver")
 
