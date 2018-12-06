@@ -2,6 +2,8 @@ name := "ZooApp"
 
 version := "1.1.0-SNAPSHOT"
 
+assemblyOutputPath in assembly := file("dist/zoo.jar")
+
 organization := "xyz.discretezoo"
 
 scalaVersion := "2.12.4"
@@ -25,5 +27,3 @@ libraryDependencies ++= Seq(
   // arrays for slick
   "com.github.tminglei" %% "slick-pg" % "0.16.2"
 )
-
-enablePlugins(DockerPlugin)
