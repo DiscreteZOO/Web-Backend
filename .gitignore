@@ -5,6 +5,9 @@
 *.swp
 *.out
 
+## generic folders to ignore
+dist/
+
 # rails specific
 *.sqlite3
 config/database.yml
