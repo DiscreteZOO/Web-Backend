@@ -1,0 +1,43 @@
+Manifest-Version: 1.0
+Class-Path: akka-http-spray-json_2.12-10.1.5.jar akka-parsing_2.12-10.
+ 1.5.jar slick-pg_2.12-0.16.2.jar jline.jar scala-compiler.jar scala-l
+ ibrary.jar scala-reflect.jar scala-xml_2.12.jar actions_2.12-1.1.2.ja
+ r caffeine-2.5.6.jar collections_2.12-1.1.2.jar command_2.12-1.1.2.ja
+ r compiler-interface-1.1.3.jar completion_2.12-1.1.2.jar config-1.2.0
+ .jar core-macros_2.12-1.1.2.jar disruptor-3.3.6.jar fastparse-utils_2
+ .12-0.4.2.jar fastparse_2.12-0.4.2.jar gigahorse-core_2.12-0.3.0.jar 
+ gigahorse-okhttp_2.12-0.3.0.jar io_2.12-1.1.4.jar ipcsocket-1.0.0.jar
+  ivy-2.3.0-sbt-b18f59ea3bc914a297bb6f1a4f7fb0ace399e310.jar jawn-pars
+ er_2.12-0.10.4.jar jline-2.14.4.jar jna-4.5.0.jar jna-platform-4.5.0.
+ jar jsch-0.1.54.jar launcher-interface-1.0.3.jar lenses_2.12-0.4.12.j
+ ar librarymanagement-core_2.12-1.1.4.jar librarymanagement-ivy_2.12-1
+ .1.4.jar log4j-api-2.8.1.jar log4j-core-2.8.1.jar log4j-slf4j-impl-2.
+ 8.1.jar logic_2.12-1.1.2.jar main-settings_2.12-1.1.2.jar main_2.12-1
+ .1.2.jar okhttp-3.7.0.jar okhttp-urlconnection-3.7.0.jar okio-1.12.0.
+ jar protobuf-java-3.3.1.jar protocol_2.12-1.1.2.jar reactive-streams-
+ 1.0.0.jar run_2.12-1.1.2.jar sbinary_2.12-0.4.4.jar sbt-1.1.2.jar sca
+ la-parser-combinators_2.12-1.0.5.jar scala-reflect-2.12.4.jar scala-x
+ ml_2.12-1.0.6.jar scalacache-caffeine_2.12-0.20.0.jar scalacache-core
+ _2.12-0.20.0.jar scalapb-runtime_2.12-0.6.0.jar shaded-scalajson_2.12
+ -1.0.0-M4.jar sjson-new-core_2.12-0.8.2.jar sjson-new-murmurhash_2.12
+ -0.8.2.jar sjson-new-scalajson_2.12-0.8.2.jar slf4j-api-1.7.25.jar so
+ urcecode_2.12-0.1.3.jar ssl-config-core_2.12-0.2.2.jar task-system_2.
+ 12-1.1.2.jar tasks_2.12-1.1.2.jar template-resolver-0.1.jar test-agen
+ t-1.1.2.jar test-interface-1.0.jar testing_2.12-1.1.2.jar util-cache_
+ 2.12-1.1.3.jar util-control_2.12-1.1.3.jar util-interface-1.1.3.jar u
+ til-logging_2.12-1.1.3.jar util-position_2.12-1.1.3.jar util-relation
+ _2.12-1.1.3.jar util-tracking_2.12-1.1.3.jar zinc-apiinfo_2.12-1.1.3.
+ jar zinc-classfile_2.12-1.1.3.jar zinc-classpath_2.12-1.1.3.jar zinc-
+ compile-core_2.12-1.1.3.jar zinc-compile_2.12-1.1.3.jar zinc-core_2.1
+ 2-1.1.3.jar zinc-ivy-integration_2.12-1.1.3.jar zinc-persist_2.12-1.1
+ .3.jar zinc_2.12-1.1.3.jar akka-http-cors_2.12-0.3.1.jar scala-parser
+ -combinators_2.12-1.1.1.jar scala-library.jar scala-reflect.jar postg
+ resql-42.2.2.jar HikariCP-2.5.1.jar slf4j-api-1.7.25.jar ssl-config-c
+ ore_2.12-0.3.6.jar slick-pg_core_2.12-0.16.2.jar akka-http-core_2.12-
+ 10.1.5.jar slf4j-nop-1.6.4.jar akka-stream_2.12-2.5.18.jar akka-http_
+ 2.12-10.1.5.jar slick_2.12-3.2.3.jar config-1.3.3.jar scala-java8-com
+ pat_2.12-0.8.0.jar akka-actor_2.12-2.5.18.jar akka-protobuf_2.12-2.5.
+ 18.jar reactive-streams-1.0.2.jar slick-hikaricp_2.12-3.2.3.jar spray
+ -json_2.12-1.3.4.jar
+Main-Class: 
+
