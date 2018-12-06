@@ -24,20 +24,16 @@ object WebServer extends Directives with JsonSupport {
     // needed for the future flatMap/onComplete in the end
     implicit val executionContext: ExecutionContext = system.dispatcher
 
-    val correctOrigin = HttpOrigin("http://localhost:3000")
+//     val correctOrigin = HttpOrigin("http://localhost:3000")
 
     lazy val routes: Route = cors() {
-      get {
-        pathSingleSlash {
-            complete(Item(Some(3), 42))
-        }
-      }
       post {
         pathPrefix("count") {
           path("graphs") {
             entity(as[SearchParameters]) {
               p => {
-                val count = countGraphs(p.collections, maybeFilters(p.filters))
+                val f = maybeFilters(p.filters)
+                val count = countGraphs(p.collections, f)
                 complete(Count(count))
               }
             }
@@ -74,8 +70,6 @@ object WebServer extends Directives with JsonSupport {
 
 }
 
-final case class Item(name: Option[Int], id: Long)
-final case class Order(items: List[Item])
 final case class Count(value: Int)
 
 final case class SearchParameters(collections: List[String], filters: List[SearchFilter])

@@ -25,3 +25,5 @@ libraryDependencies ++= Seq(
   // arrays for slick
   "com.github.tminglei" %% "slick-pg" % "0.16.2"
 )
+
+enablePlugins(DockerPlugin)
