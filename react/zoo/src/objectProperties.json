@@ -1,0 +1,38 @@
+{
+    "graphs": {
+        "symcubic": {"isFilter": false, "display": "SymCubic", "type": "index"},
+        "cvt": {"isFilter": false, "display": "CVT", "type": "index"},
+        "vt": {"isFilter": false, "display": "VT", "type": "index"},
+        "chromatic_index": {"isFilter": true, "display": "chromatic index", "type": "numeric"},
+        "clique_number": {"isFilter": true, "display": "clique number", "type": "numeric"},
+        "connected_components_number": {"isFilter": true, "display": "connected components number", "type": "numeric"},
+        "diameter": {"isFilter": true, "display": "diameter", "type": "numeric"},
+        "girth": {"isFilter": true, "display": "girth", "type": "numeric"},
+        "is_arc_transitive": {"isFilter": true, "display": "is arc transitive", "type": "bool"},
+        "is_bipartite": {"isFilter": true, "display": "is bipartite", "type": "bool"},
+        "is_cayley": {"isFilter": true, "display": "is cayley", "type": "bool"},
+        "is_distance_regular": {"isFilter": true, "display": "is distance regular", "type": "bool"},
+        "is_distance_transitive": {"isFilter": true, "display": "is distance transitive", "type": "bool"},
+        "is_edge_transitive": {"isFilter": true, "display": "is edge transitive", "type": "bool"},
+        "is_eulerian": {"isFilter": true, "display": "is eulerian", "type": "bool"},
+        "is_hamiltonian": {"isFilter": true, "display": "is hamiltonian", "type": "bool"},
+        "is_moebius_ladder": {"isFilter": true, "display": "is moebius ladder", "type": "bool"},
+        "is_overfull": {"isFilter": true, "display": "is overfull", "type": "bool"},
+        "is_partial_cube": {"isFilter": true, "display": "is partial cube", "type": "bool"},
+        "is_prism": {"isFilter": true, "display": "is prism", "type": "bool"},
+        "is_split": {"isFilter": true, "display": "is split", "type": "bool"},
+        "is_spx": {"isFilter": true, "display": "is spx", "type": "bool"},
+        "is_strongly_regular": {"isFilter": true, "display": "is strongly regular", "type": "bool"},
+        "odd_girth": {"isFilter": true, "display": "odd girth", "type": "numeric"},
+        "order": {"isFilter": true, "display": "order", "type": "numeric"},
+        "size": {"isFilter": true, "display": "size", "type": "numeric"},
+        "triangles_count": {"isFilter": true, "display": "triangles count", "type": "numeric"}
+    },
+    "maniplexes": {
+        "symmetry_type": {"isFilter": false, "display": "symmetry type", "type": "string"},
+        "is_polytope": {"isFilter": true, "display": "is polytope", "type": "bool"},
+        "is_regular": {"isFilter": true, "display": "is regular", "type": "bool"},
+        "orbits": {"isFilter": true, "display": "number of orbits", "type": "numeric"},
+        "small_group_order": {"isFilter": true, "display": "group order", "type": "numeric"}
+    }
+}

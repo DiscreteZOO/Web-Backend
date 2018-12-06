@@ -1,38 +1,6 @@
 import React, { Component } from 'react';
-import { Container, Row, Col, Button, ButtonGroup, FormGroup, Label, Input } from 'reactstrap';
-
-const dataFilters = {
-    graphs: {
-        has_multiple_edges: "bool",
-        is_arc_transitive: "bool",
-        is_bipartite: "bool",
-        is_cayley: "bool",
-        is_distance_regular: "bool",
-        is_distance_transitive: "bool",
-        is_edge_transitive: "bool",
-        is_eulerian: "bool",
-        is_forest: "bool",
-        is_hamiltonian: "bool",
-        is_moebius_ladder: "bool", // CVT
-        is_overfull: "bool",
-        is_partial_cube: "bool",
-        is_prism: "bool", // CVT
-        is_split: "bool",
-        is_spx: "bool", // CVT
-        is_strongly_regular: "bool",
-        is_tree: "bool",
-        chromatic_index: "numeric",
-        clique_number: "numeric",
-        connected_components_number: "numeric",
-        diameter: "numeric",
-        girth: "numeric",
-        number_of_loops: "numeric",
-        odd_girth: "numeric",
-        order: "numeric",
-        size: "numeric",
-        triangles_count: "numeric"
-    }
-}
+import { Container, Row, Col, Button, ButtonGroup, ButtonDropdown, DropdownMenu, DropdownToggle, DropdownItem, FormGroup, Label, Input } from 'reactstrap';
+import objectProperties from './objectProperties.json';
 
 const dataCollections = {
     graphs: {
@@ -65,7 +33,6 @@ class ZooSearch extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            objects: null,
             collections: [],
             selectedFilters: "{}",
             counter: 0
@@ -75,22 +42,23 @@ class ZooSearch extends Component {
     
     componentDidUpdate(pp, ps) {
         const s = this.state
-        const objectsCollectionsUpdate = (s.objects != ps.objects) || (s.collections != ps.collections);
+        const objects = this.props.objects
+        const objectsCollectionsUpdate = (objects !== ps.objects) || (s.collections !== ps.collections);
         const filters = JSON.parse(s.selectedFilters);
         const keys = this.sortedKeys(filters);
         var selectedFiltersUpdate = false;
         
-        if (s.selectedFilters != ps.selectedFilters) {
+        if (s.selectedFilters !== ps.selectedFilters) {
             const prevFilters = JSON.parse(ps.selectedFilters);
             const prevKeys = this.sortedKeys(prevFilters)
-            if (keys.length != prevKeys.length) {
+            if (keys.length !== prevKeys.length) {
                 selectedFiltersUpdate = true;
             }
             else {
                 var i = 0;
                 while (i < keys.length && !selectedFiltersUpdate) {
-                    if (keys[i] != prevKeys[i]) selectedFiltersUpdate = true;
-                    else if (filters[keys[i]] != prevFilters[keys[i]]) selectedFiltersUpdate = true;
+                    if (keys[i] !== prevKeys[i]) selectedFiltersUpdate = true;
+                    else if (filters[keys[i]] !== prevFilters[keys[i]]) selectedFiltersUpdate = true;
                     i++;
                 }
             }
@@ -102,7 +70,6 @@ class ZooSearch extends Component {
                 collections: s.collections,
                 filters: queryFilters
             }
-            this.postData('http://localhost:8080/count/' + s.objects, queryJSON).then(data => {
             this.postData(this.props.api + '/count/' + objects, queryJSON).then(data => {
                 this.setState({counter: data.value})
             }).catch(error => console.error(error));
@@ -131,21 +98,19 @@ class ZooSearch extends Component {
     }
     
     chooseObjects(newChosenObjects) {
-        const previousChosenObjects = this.state.objects;
-        if (newChosenObjects == previousChosenObjects) { return; }
+        const previousChosenObjects = this.props.objects;
+        if (newChosenObjects === previousChosenObjects) { return; }
+        this.props.passObjects(newChosenObjects);
         
         var newState = {
-            objects: newChosenObjects,
             collections: getCollectionsKeys(newChosenObjects),
             selectedFilters: "{}",
             counter: 0
         }
-        
         this.setState(newState);
     }
     
     toggleCollection(c) {
-        var result = {};
         var newList = this.state.collections.slice(0); // clone
         var i = newList.indexOf(c);
             
@@ -168,7 +133,6 @@ class ZooSearch extends Component {
             collections: s.collections,
             filters: queryFilters
         }
-        this.postData('http://localhost:8080/results/' + s.objects, queryJSON).then(data => {
         this.postData(this.props.api + '/results/' + this.props.objects, queryJSON).then(data => {
             this.props.passResults(data);
         }).catch(error => console.error(error));
@@ -182,22 +146,37 @@ class ZooSearch extends Component {
                         <Col lg="3" md="3" sm="12" className="mx-auto my-4" id="select-type">
                             <h2 className="section-heading text-white" id="step2">Search</h2>
                             <ZooChooseObjects
-                                objects={this.state.objects}
+                                objects={this.props.objects}
                                 collections={this.state.collections}
                                 chooseObjects={(o) => this.chooseObjects(o)}
                                 toggleCollection={(c) => this.toggleCollection(c)} />
                         </Col>
                         <ZooFilters
-                            objects={this.state.objects}
+                            objects={this.props.objects}
                             filters={this.state.selectedFilters}
                             callback={(s) => this.updateFilters(s)} />
                     </Row>
-                    { !(this.state.objects === null) &&
+                    { !(this.props.objects === null) &&
                         <React.Fragment>
                             <hr className="my-2" />
                             <Row>
                                 <Col lg="8" className="text-white">
-                                    <p><Button className="mr-3" onClick={this.getResults.bind(this)}>Display results</Button> Objects found: <i>{this.state.counter}</i>.</p>
+                                    <p>Matches found: <i>{this.state.counter}</i></p>
+                                    <div className="buttons">
+                                        <Button onClick={this.getResults.bind(this)}>Display results</Button>
+                                        <ButtonDropdown isOpen={this.state.dropdownOpen} toggle={this.toggle} className="ml-3">
+                                            <DropdownToggle caret>
+                                                <i className="fas fa-download"></i>
+                                            </DropdownToggle>
+                                            <DropdownMenu>
+                                                <DropdownItem header>Header</DropdownItem>
+                                                <DropdownItem disabled>Action</DropdownItem>
+                                                <DropdownItem>Another Action</DropdownItem>
+                                                <DropdownItem divider />
+                                                <DropdownItem>Another Action</DropdownItem>
+                                            </DropdownMenu>
+                                        </ButtonDropdown>
+                                    </div>
                                 </Col>
                             </Row>
                         </React.Fragment>
@@ -218,7 +197,7 @@ class ZooChooseObjects extends Component {
         return(
             // default color="secondary"
             <Button
-                className={"zoo-radio-objects" + (this.props.objects == value ? " focus" : "")}
+                className={"zoo-radio-objects" + (this.props.objects === value ? " focus" : "")}
                 onClick={() => this.props.chooseObjects(value)}>
                 {label} <ZooInfoButton value="type" />
             </Button>
@@ -319,7 +298,7 @@ class ZooFilters extends Component {
                         {filters.map((f) => 
                             <li key={f} onClick={this.addFilter.bind(this, f)}>
                                 <span className="fa-li"><i className="fas fa-plus"></i></span>
-                                {f} <ZooInfoButton value="filter" />
+                                {f.replace(/_/g, ' ')} <ZooInfoButton value="filter" />
                             </li>
                         )}
                     </ul>
@@ -332,13 +311,13 @@ class ZooFilters extends Component {
         return(
             <div className="zoo-search-filter">
                 <div className="zoo-filter-box">
-                    {filters.length == 0 && <p className="text-center my-3">Select filters</p>}
+                    {filters.length === 0 && <p className="text-center my-3">Select filters</p>}
                     <ul className="fa-ul">
                         {filters.map((f) => (
                             <SelectedFilter key={f.name}
                                 name={f.name}
                                 value={f.value}
-                                type={dataFilters[this.props.objects][f.name]}
+                                type={objectProperties[this.props.objects][f.name].type}
                                 onDoneEditing={(v) => this.updateFilterValue(f.name, v)}
                                 onRemoveFilter={() => this.removeFilter(f.name)}/>
                         ))}
@@ -354,10 +333,11 @@ class ZooFilters extends Component {
         var available = [];
         if (display) {
             const current = this.getCurrentFilters(); 
-            const all = Object.keys(dataFilters[this.props.objects]);
             const currentKeys = Object.keys(current);
             selected = currentKeys.map((k) => ({name: k, value: current[k]}));
-            available = all.filter((i) => {return currentKeys.indexOf(i) < 0;})
+            available = Object.keys(objectProperties[this.props.objects]).filter((f) => {
+                return objectProperties[this.props.objects][f].isFilter && currentKeys.indexOf(f) < 0;
+            })
         }
         return(
             <React.Fragment>
@@ -377,7 +357,7 @@ class SelectedFilter extends Component {
     
     constructor(props) {
         super(props);
-        this.state = { edit: true, value: (this.props.type == "bool" ? true : "") };
+        this.state = { edit: true, value: (this.props.type === "bool" ? true : "") };
         this.editFilter = this.editFilter.bind(this);
         this.toggleBooleanValue = this.toggleBooleanValue.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -390,21 +370,20 @@ class SelectedFilter extends Component {
     
     toggleBooleanValue(newValue) {
         const previousValue = this.state.value;
-        if (newValue == previousValue) { return; }
+        if (newValue === previousValue) { return; }
         this.setState({ value: newValue });
     }
     
     handleInputChange(e) {
-        var change = {};
         this.setState({ value: e.target.value });
     }
     
     validateAndUpdate() {
         var valueValid = false;
-        if (this.props.type == "bool") {
+        if (this.props.type === "bool") {
             valueValid = (this.state.value === true || this.state.value === false)
         }
-        if (this.props.type == "numeric") {
+        if (this.props.type === "numeric") {
             valueValid = /^(=|<=|>=|<|>|<>|!=)(\d+\.?\d*)$/.test(this.state.value.replace(/ /g, ''))
         }
         if (valueValid) {
@@ -414,7 +393,7 @@ class SelectedFilter extends Component {
     }
     
     renderEditCondition() {
-        if (this.props.type == "bool") {
+        if (this.props.type === "bool") {
             return(
                 <ButtonGroup id="zoo-choose-objects" className="zoo-bool-filter btn-group-sm">
                     <Button
@@ -439,7 +418,7 @@ class SelectedFilter extends Component {
         return(
             <li key={this.props.name} className={(this.state.edit ? "edit" : "")}>
                 { (this.state.value === false && (!this.state.edit)) && <i>not </i> }
-                {this.props.name} <ZooInfoButton value="filter" />
+                {this.props.name.replace(/_/g, ' ')} <ZooInfoButton value="filter" />
                 { !this.state.edit && <i className="zoo-numeric-condition-display">{this.state.value} </i> }
                 { this.state.edit && this.renderEditCondition() }
                 <span className="text-muted small">

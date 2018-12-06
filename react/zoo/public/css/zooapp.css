@@ -40,6 +40,7 @@
 .db-deselected { color: #999; }
 
 .fa-download { color: #19717F; }
+#search .fa-download { color: #FFFFFF; }
 
 .zoo-search-filter {
     border-radius: 0.25rem;
@@ -73,8 +74,13 @@
 #zoo-selected-filters .zoo-filter-box li.edit .edit-button { display: none }
 #zoo-selected-filters .zoo-filter-box li p { margin: 0; }
 
+
 button.zoo-sort-order-select { margin-left: 20px; }
 [v-cloak] { display:none; }
 
 #zoo-page-jump { margin-left: 30px; }
 #zoo-page-jump input { width: 100px; }
+
+#zoo-search-box div.buttons {
+    margin-bottom: 1rem;
+}

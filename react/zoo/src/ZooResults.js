@@ -1,45 +1,48 @@
 import React, { Component } from 'react';
-import { Container, Row, Col, Button, ButtonGroup, FormGroup, Label, Input } from 'reactstrap';
-
-const columnsData = {
-    graphs: {
-        columnSet: "default",
-        default: [
-            {name: "order", display: "order", type: "numeric"},
-            {name: "connected_components_number", display: "connected components number", type: "numeric"},
-            {name: "diameter", display: "diameter", type: "numeric"},
-            {name: "girth", display: "girth", type: "numeric"},
-            {name: "has_multiple_edges", display: "has multiple edges", type: "bool"},
-            {name: "is_arc_transitive", display: "is arc transitive", type: "bool"},
-            {name: "is_bipartite", display: "is bipartite", type: "bool"},
-            {name: "is_cayley", display: "is cayley", type: "bool"},
-            {name: "is_distance_regular", display: "is distance regular", type: "bool"},
-            {name: "is_distance_transitive", display: "is distance transitive", type: "bool"},
-            {name: "is_edge_transitive", display: "is edge transitive", type: "bool"},
-            {name: "is_eulerian", display: "is eulerian", type: "bool"},
-            {name: "is_hamiltonian", display: "is hamiltonian", type: "bool"},
-            {name: "is_strongly_regular", display: "is strongly regular", type: "bool"}
-        ],
-        custom: []
-    },
-    maniplexes: {
-        columnSet: "default",
-        default: [
-            {name: "ORBITS", display: "number of orbits", type: "numeric"},
-            {name: "IS_POLYTOPE", display: "is polytope", type: "bool"},
-            {name: "IS_REGULAR", display: "is regular", type: "bool"},
-            {name: "SMALL_GROUP_ORDER", display: "group order", type: "numeric"},
-            {name: "SYMMETRY_TYPE", display: "symmetry type", type: "string"}
-        ],
-        custom: []
-    }
-}
+import { Container, Row, Col } from 'reactstrap';
+import objectProperties from './objectProperties.json';
 
 function camelCase(s) { return s.replace(/_([a-z])/g, function (g) { return g[1].toUpperCase(); }); }
 
+const defaultColumns = {
+    graphs: ["order", "vt", "cvt", "symcubic", "diameter", "girth", 
+             "is_arc_transitive", "is_bipartite", "is_cayley", "is_hamiltonian"],
+    maniplexes: []
+}
+
+
+
+class ZooColumnSettings extends Component {
+    render() {
+        return (
+            <th key={this.props.column.name}>
+                <i className="fas fa-minus"></i>
+                <i className="fas fa-plus"></i>
+            </th>
+        );
+    }
+}
+
 class ZooResults extends Component {
     
+    constructor(props) {
+        super(props);
+        this.state = {
+            columns: defaultColumns
+        };
+        this.getColumns = (objects) => {
+            const colNames = this.state.columns[this.props.objects]
+            const colObjects = colNames.map((columnName) => {
+                var obj = objectProperties[objects][columnName];
+                obj.name = columnName;
+                return obj;  
+            })
+            return colObjects;
+        }
+    }
+    
     render() {
+        const columns = this.getColumns(this.props.objects);
         return (
             <section id="results">
 				<Container>
@@ -49,16 +52,14 @@ class ZooResults extends Component {
                                 <table className="table table-striped">
                                     <thead>
                                         <tr>
-                                            {columnsData.graphs.default.map((c) => {
-                                                return <th key={c.name}>{c.display}</th>
-                                            })}
+                                            {columns.map((c) => <th key={c.name}>{c.display}</th>)}
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {this.props.results.map((r) => {
                                             return(
                                                 <tr key={r.zooid}>
-                                                    {columnsData.graphs.default.map((c) => {
+                                                    {columns.map((c) => {
                                                         return(
                                                             <td key={r.zooid + "-" + c.name}>
                                                                 {String(r[c.type][camelCase(c.name)])}
