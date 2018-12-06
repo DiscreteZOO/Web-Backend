@@ -102,8 +102,7 @@ class ZooSearch extends Component {
                 collections: s.collections,
                 filters: queryFilters
             }
-            this.postData('http://localhost:8080/count/' + s.objects, queryJSON).then(data => {
-            this.postData(this.props.api + '/count/' + objects, queryJSON).then(data => {
+            this.postData(this.props.api + '/count/' + s.objects, queryJSON).then(data => {
                 this.setState({counter: data.value})
             }).catch(error => console.error(error));
         }
@@ -168,7 +167,6 @@ class ZooSearch extends Component {
             collections: s.collections,
             filters: queryFilters
         }
-        this.postData('http://localhost:8080/results/' + s.objects, queryJSON).then(data => {
         this.postData(this.props.api + '/results/' + this.props.objects, queryJSON).then(data => {
             this.props.passResults(data);
         }).catch(error => console.error(error));
