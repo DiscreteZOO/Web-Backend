@@ -12,3 +12,11 @@ $ sbt run
 ```
 
 If `browse` doesn't launch your browser, manually open [http://localhost:8080/](http://localhost:8080/) in your browser.
+
+## Arguments
+
+```
+java -jar dist/zoo.jar [port [hostname]]
+```
+
+Defaults to localhost:8080
