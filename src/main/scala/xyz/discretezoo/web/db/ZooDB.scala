@@ -151,7 +151,7 @@ object ZooDB {
                                   // CVT
                                   isMoebiusLadder: Option[Boolean],
                                   isPrism: Option[Boolean],
-                                  isSPX: Option[Boolean],
+                                  isSPX: Option[Boolean]
                                 )
 
   case class GraphNumericColumns(
