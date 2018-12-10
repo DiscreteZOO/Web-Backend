@@ -38,8 +38,7 @@ object ZooDB {
     val actualFilters = filters ++ Seq(collectionFilters)
     if (actualFilters.nonEmpty) s"WHERE ${actualFilters.map(f => s"($f)").mkString(" AND ")}" else ""
   }
-
-  def getGraphs(collections: Seq[String], filters: Seq[String], limit: Int, order: Seq[OrderBy], page: Int): Seq[GraphAllColumns] = {
+  def getGraphs(collections: Seq[String], filters: Seq[String], limit: Int, order: Seq[OrderBy], page: Int): Future[Seq[GraphAllColumns]] = {
     val offset = (page - 1) * limit
     def orderBy: String = {
       val columns = order.flatMap(_.toSQL).mkString(",")
@@ -55,10 +54,11 @@ object ZooDB {
          #$orderBy
          LIMIT #$limit OFFSET #$offset;
        """.as[GraphAllColumns]
-    val f: Future[Seq[GraphAllColumns]] = db.run(q)
-    val result = Await.result(f, Duration("Inf"))
-    db.close()
-    result
+    db.run(q)
+//    val f: Future[Seq[GraphAllColumns]] =
+//    val result = Await.result(f, Duration("Inf"))
+//    db.close()
+//    result
   }
 
   def getManiplexes(collections: Seq[String], filters: Seq[String], limit: Int, order: Seq[OrderBy], page: Int): Seq[ManiplexAllColumns] = {

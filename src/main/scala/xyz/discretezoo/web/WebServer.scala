@@ -2,11 +2,13 @@ package xyz.discretezoo.web
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.server.{Directives, Route}
+import akka.http.scaladsl.marshalling.ToResponseMarshallable
+import akka.http.scaladsl.server.{Directives, Route, StandardRoute}
 import akka.stream.ActorMaterializer
 import akka.http.scaladsl.model.headers._
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 
+import scala.util.{Failure, Success}
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
 import scala.io.StdIn
 import db.ZooDB._
@@ -40,19 +42,23 @@ object WebServer extends Directives with JsonSupport {
           }
         } ~ pathPrefix("results") {
           path("graphs") {
-            entity(as[SearchParameters]) {
-              p => {
-                val limit = 20
-                val filters = maybeFilters(p.filters)
-                val order = Seq()
-                val page = 1
-                val count = countGraphs(p.collections, filters)
-                val pages = (count / limit).ceil.toInt
-                val actualPage = if (page >= 1 && page <= pages) page else 1
-                val results = ZooDB.getGraphs(p.collections, filters, limit, order, actualPage)
-                complete(results)
-              }
-            }
+            entity(as[ResultsParameters]) { p => {
+                ctx => {
+                  println(p)
+                  val filters = maybeFilters(p.parameters.filters)
+                  val order = Seq()
+                  val count = countGraphs(p.parameters.collections, filters)
+                  val pages = (count / p.pageSize).ceil.toInt
+                  val actualPage = if (p.page >= 1 && p.page <= pages) p.page else 1
+                  val resultsFuture = ZooDB.getGraphs(p.parameters.collections, filters, p.pageSize, order, actualPage)
+
+                  def local(m: Seq[GraphAllColumns]) = { ctx.complete(m) }
+                  resultsFuture.flatMap(local)
+
+//                  def local(m: GraphResult) = { ctx.complete(m) }
+//                  resultsFuture.map(d => GraphResult(pages, d)).flatMap(local)
+                }
+            } }
           }
         }
       }
@@ -76,5 +82,8 @@ object WebServer extends Directives with JsonSupport {
 
 final case class Count(value: Int)
 
+final case class ResultsParameters(page: Int, pageSize: Int, parameters: SearchParameters)
 final case class SearchParameters(collections: List[String], filters: List[SearchFilter])
 final case class SearchFilter(name: String, value: String)
+
+final case class GraphResult(pages: Int, data: Seq[GraphAllColumns])

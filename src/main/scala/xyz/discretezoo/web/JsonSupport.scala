@@ -11,6 +11,9 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
 
   implicit val formatSearchFilter: RootJsonFormat[SearchFilter] = jsonFormat2(SearchFilter)
   implicit val formatSearchParameters: RootJsonFormat[SearchParameters] = jsonFormat2(SearchParameters)
+  implicit val formatResultsParameters: RootJsonFormat[ResultsParameters] = jsonFormat3(ResultsParameters)
+
+  implicit val formatGraphResults: RootJsonFormat[GraphResult] = jsonFormat2(GraphResult)
 
   implicit val formatGraphBooleanColumns: RootJsonFormat[GraphBooleanColumns] = jsonFormat18(GraphBooleanColumns)
   implicit val formatGraphNumericColumns: RootJsonFormat[GraphNumericColumns] = jsonFormat10(GraphNumericColumns)
