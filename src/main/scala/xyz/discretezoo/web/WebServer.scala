@@ -70,7 +70,7 @@ object WebServer extends Directives with JsonSupport {
     val port = argsList(0).getOrElse("8080").toInt
 
     val bindingFuture = Http().bindAndHandle(routes, hostname, port)
-
+    
     println(s"Server online at http://$hostname:$port/\nPress RETURN to stop...")
     StdIn.readLine() // let it run until user presses return
     bindingFuture
