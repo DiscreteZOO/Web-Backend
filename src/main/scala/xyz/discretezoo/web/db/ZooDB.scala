@@ -120,10 +120,10 @@ object ZooDB {
 
   }
 
-  case class OrderBy(column: String, order: String) {
+  final case class OrderBy(column: String, ord: String) {
     def toSQL: Option[String] = {
-      if (GraphColumns.isValidFilterColumnName(column) && Seq("ASC", "DESC").contains(order))
-        Some(s""""$column" $order""")
+      if (GraphColumns.isValidFilterColumnName(column) && Seq("ASC", "DESC").contains(ord))
+        Some(s""""$column" $ord""")
       else None
     }
   }

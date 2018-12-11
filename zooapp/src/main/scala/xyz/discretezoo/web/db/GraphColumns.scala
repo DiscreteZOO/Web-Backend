@@ -1,6 +1,6 @@
 package xyz.discretezoo.web.db
 
-import xyz.discretezoo.web.SearchFilter
+import xyz.discretezoo.web.Parameter
 
 object GraphColumns {
 
@@ -21,12 +21,12 @@ object GraphColumns {
     })
   }
 
-  def isValidQueryFilter(p: SearchFilter): Boolean = {
+  def isValidQueryFilter(p: Parameter): Boolean = {
     (isValidBoolColumnName(p.name) && isBoolValue(p.value)) || (isValidIntColumnName(p.name) && isNumericCondition(p.value))
   }
 
   // assumes valid conditions
-  def queryCondition(p: SearchFilter): String = {
+  def queryCondition(p: Parameter): String = {
     val escapedColumnName = s""""${p.name}""""
     if (isValidBoolColumnName(p.name))
       (if (p.value == "false") "NOT " else "") + escapedColumnName

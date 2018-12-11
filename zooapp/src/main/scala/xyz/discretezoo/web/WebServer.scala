@@ -14,7 +14,7 @@ import xyz.discretezoo.web.db.{GraphColumns, ZooDB}
 
 object WebServer extends Directives with JsonSupport {
 
-  private def maybeFilters(filters: Seq[SearchFilter]): Seq[String] =
+  private def maybeFilters(filters: Seq[Parameter]): Seq[String] =
     filters.filter(GraphColumns.isValidQueryFilter).map(GraphColumns.queryCondition)
 
   def main(args: Array[String]) {
@@ -76,5 +76,5 @@ object WebServer extends Directives with JsonSupport {
 
 final case class Count(value: Int)
 
-final case class SearchParameters(collections: List[String], filters: List[SearchFilter])
+final case class SearchParameters(collections: List[String], filters: List[Parameter])
 final case class SearchFilter(name: String, value: String)

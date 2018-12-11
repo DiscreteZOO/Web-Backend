@@ -16,7 +16,7 @@ import xyz.discretezoo.web.db.{GraphColumns, ZooDB}
 
 object WebServer extends Directives with JsonSupport {
 
-  private def maybeFilters(filters: Seq[SearchFilter]): Seq[String] =
+  private def maybeFilters(filters: Seq[Parameter]): Seq[String] =
     filters.filter(GraphColumns.isValidQueryFilter).map(GraphColumns.queryCondition)
 
   def main(args: Array[String]) {
@@ -46,9 +46,9 @@ object WebServer extends Directives with JsonSupport {
                 ctx => {
                   println(p)
                   val filters = maybeFilters(p.parameters.filters)
-                  val order = Seq()
                   val count = countGraphs(p.parameters.collections, filters)
                   val pages = (count / p.pageSize).ceil.toInt
+                  val order = p.orderBy.map({ case Parameter(column, ord) => OrderBy(column, ord) })
                   val actualPage = if (p.page >= 1 && p.page <= pages) p.page else 1
                   val resultsFuture = ZooDB.getGraphs(p.parameters.collections, filters, p.pageSize, order, actualPage)
 
@@ -82,8 +82,7 @@ object WebServer extends Directives with JsonSupport {
 
 final case class Count(value: Int)
 
-final case class ResultsParameters(page: Int, pageSize: Int, parameters: SearchParameters)
-final case class SearchParameters(collections: List[String], filters: List[SearchFilter])
-final case class SearchFilter(name: String, value: String)
-
+final case class ResultsParameters(page: Int, pageSize: Int, parameters: SearchParameters, orderBy: List[Parameter])
+final case class SearchParameters(collections: List[String], filters: List[Parameter])
+final case class Parameter(name: String, value: String)
 final case class GraphResult(pages: Int, data: Seq[GraphAllColumns])
