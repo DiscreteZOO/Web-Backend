@@ -19,6 +19,7 @@ object WebServer extends Directives with JsonSupport {
   private def maybeFilters(filters: Seq[Parameter]): Seq[String] =
     filters.filter(GraphColumns.isValidQueryFilter).map(GraphColumns.queryCondition)
 
+  @volatile var keepRunning = true
   def main(args: Array[String]) {
 
     implicit val system: ActorSystem = ActorSystem("ZooActors")
@@ -70,9 +71,18 @@ object WebServer extends Directives with JsonSupport {
     val port = argsList(0).getOrElse("8080").toInt
 
     val bindingFuture = Http().bindAndHandle(routes, hostname, port)
-    
-    println(s"Server online at http://$hostname:$port/\nPress RETURN to stop...")
-    StdIn.readLine() // let it run until user presses return
+
+    println(s"Server online at http://$hostname:$port/\nPress CTRL+C to stop...")
+
+    // add a hook to shutdown via shutdown
+    val mainThread = Thread.currentThread();
+    Runtime.getRuntime.addShutdownHook(new Thread() {override def run = {
+      println(s"Received CTRL-C, exiting")
+      keepRunning = false
+      mainThread.join()
+    }})
+    // sleep until we receive ctrl+c
+    while (keepRunning) {Thread.sleep(1000)}
     bindingFuture
       .flatMap(_.unbind()) // trigger unbinding from the port
       .onComplete(_ => system.terminate()) // and shutdown when done
