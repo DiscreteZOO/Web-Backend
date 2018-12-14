@@ -1,18 +1,19 @@
 package xyz.discretezoo.web.db
 
-import xyz.discretezoo.web.db.GraphColumns.{isValidBoolColumnName, _}
+import xyz.discretezoo.web.Parameter
 
 object ManiplexColumns {
 
   def getColumnList: String = all.map(p => s""""${p.name}"""").mkString(", ")
 
-  def all: Seq[Property] = columnsBool ++ columnsInt
+  def all: Seq[Property] = columnsBool ++ columnsInt ++ columnsString
 
   def isValidBoolColumnName(s: String): Boolean = columnsBool.map(_.name).contains(s)
   def isValidIntColumnName(s: String): Boolean = columnsInt.map(_.name).contains(s)
   def isValidStringColumnName(s: String): Boolean = columnsString.map(_.name).contains(s)
   def isValidFilterColumnName(s: String): Boolean = {
-    isValidIntColumnName(s) || isValidBoolColumnName(s) || isValidStringColumnName(s)
+    val testableName = s.toUpperCase
+    isValidIntColumnName(testableName) || isValidBoolColumnName(testableName) || isValidStringColumnName(testableName)
   }
 
   def isBoolValue(s: String): Boolean = s == "true" || s == "false"
@@ -36,19 +37,22 @@ object ManiplexColumns {
     cleared.substring(1, cleared.length - 1).split(',').map(_.toInt).sorted.map(_.toString).mkString("-")
   }
 
-  def isValidQueryFilter(p: (String, String)): Boolean = {
-    (isValidBoolColumnName(p._1) && isBoolValue(p._2)) ||
-      (isValidIntColumnName(p._1) && isNumericCondition(p._2)) ||
-      (isValidStringColumnName(p._1) && isStringCondition(p._2))
+  def isValidQueryFilter(p: Parameter): Boolean = {
+    (isValidBoolColumnName(p.name.toUpperCase) && isBoolValue(p.value)) ||
+      (isValidIntColumnName(p.name.toUpperCase) && isNumericCondition(p.value)) ||
+      (isValidStringColumnName(p.name.toUpperCase) && isStringCondition(p.value))
   }
 
   // assumes valid conditions
-  def queryCondition(p: (String, String)): String = {
-    val escapedColumnName = s""""${p._1}""""
-    if (isValidBoolColumnName(p._1))
-      (if (p._2 == "false") "NOT " else "") + escapedColumnName
-    else if (isValidIntColumnName(p._1)) escapedColumnName + p._2.filter(_ > ' ')
-    else s"""$escapedColumnName = "${parseStringCondition(p._2)}""""
+  def queryCondition(p: Parameter): String = {
+    val escapedColumnName = s""""${p.name.toUpperCase}""""
+    if (isValidBoolColumnName(p.name.toUpperCase)) {
+      (if (p.value == "false") "NOT " else "") + escapedColumnName
+    }
+    else if (isValidIntColumnName(p.name.toUpperCase)) {
+      escapedColumnName + p.value.filter(_ > ' ')
+    }
+    else s"""$escapedColumnName = "${parseStringCondition(p.value)}""""
   }
 
   private def columnsBool: Seq[Property] = Seq(
@@ -58,6 +62,8 @@ object ManiplexColumns {
 
   private def columnsInt: Seq[Property] = Seq(
     "ORBITS",
+    "RANK",
+    "SMALL_GROUP_ID",
     "SMALL_GROUP_ORDER"
   ).map(f => Property(f, "bool"))
 

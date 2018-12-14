@@ -12,12 +12,17 @@ import scala.util.{Failure, Success}
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
 import scala.io.StdIn
 import db.ZooDB._
-import xyz.discretezoo.web.db.{GraphColumns, ZooDB}
+import xyz.discretezoo.web.db.{GraphColumns, ManiplexColumns, ZooDB}
 
 object WebServer extends Directives with JsonSupport {
 
-  private def maybeFilters(filters: Seq[Parameter]): Seq[String] =
-    filters.filter(GraphColumns.isValidQueryFilter).map(GraphColumns.queryCondition)
+  private def maybeFilters(objects: String, filters: Seq[Parameter]): Seq[String] = {
+    objects match {
+      case "graphs" => filters.filter(GraphColumns.isValidQueryFilter).map(GraphColumns.queryCondition)
+      case "maniplexes" => filters.filter(ManiplexColumns.isValidQueryFilter).map(ManiplexColumns.queryCondition)
+    }
+  }
+
 
   @volatile var keepRunning = true
   def main(args: Array[String]) {
@@ -35,8 +40,16 @@ object WebServer extends Directives with JsonSupport {
           path("graphs") {
             entity(as[SearchParameters]) {
               p => {
-                val f = maybeFilters(p.filters)
+                val f = maybeFilters("graphs", p.filters)
                 val count = countGraphs(p.collections, f)
+                complete(Count(count))
+              }
+            }
+          } ~ path("maniplexes") {
+            entity(as[SearchParameters]) {
+              p => {
+                val f = maybeFilters("maniplexes", p.filters)
+                val count = countManiplexes(p.collections, f)
                 complete(Count(count))
               }
             }
@@ -45,8 +58,7 @@ object WebServer extends Directives with JsonSupport {
           path("graphs") {
             entity(as[ResultsParameters]) { p => {
                 ctx => {
-                  println(p)
-                  val filters = maybeFilters(p.parameters.filters)
+                  val filters = maybeFilters("graphs", p.parameters.filters)
                   val count = countGraphs(p.parameters.collections, filters)
                   val pages = (count / p.pageSize).ceil.toInt
                   val order = p.orderBy.map({ case Parameter(column, ord) => OrderBy(column, ord) })
@@ -59,6 +71,20 @@ object WebServer extends Directives with JsonSupport {
 //                  def local(m: GraphResult) = { ctx.complete(m) }
 //                  resultsFuture.map(d => GraphResult(pages, d)).flatMap(local)
                 }
+            } }
+          } ~ path("maniplexes") {
+            entity(as[ResultsParameters]) { p => {
+              ctx => {
+                val filters = maybeFilters("maniplexes", p.parameters.filters)
+                val count = countManiplexes(p.parameters.collections, filters)
+                val pages = (count / p.pageSize).ceil.toInt
+                val order = p.orderBy.map({ case Parameter(column, ord) => OrderBy(column, ord) })
+                val actualPage = if (p.page >= 1 && p.page <= pages) p.page else 1
+                val resultsFuture = ZooDB.getManiplexes(p.parameters.collections, filters, p.pageSize, order, actualPage)
+
+                def local(m: Seq[ManiplexAllColumns]) = { ctx.complete(m) }
+                resultsFuture.flatMap(local)
+              }
             } }
           }
         }
@@ -95,4 +121,5 @@ final case class Count(value: Int)
 final case class ResultsParameters(page: Int, pageSize: Int, parameters: SearchParameters, orderBy: List[Parameter])
 final case class SearchParameters(collections: List[String], filters: List[Parameter])
 final case class Parameter(name: String, value: String)
-final case class GraphResult(pages: Int, data: Seq[GraphAllColumns])
+//final case class GraphResult(pages: Int, data: Seq[GraphAllColumns])
+//final case class ManiplexResult(pages: Int, data: Seq[ManiplexAllColumns])
