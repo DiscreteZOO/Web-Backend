@@ -1,41 +1,23 @@
 package xyz.discretezoo.web.db
 
 import xyz.discretezoo.web.Parameter
+import xyz.discretezoo.web.db.model.Columns
 
-object GraphColumns {
+object GraphColumns extends Columns {
 
-  def getColumnList: String = all.map(p => s""""${p.name}"""").mkString(", ")
-
-  def all: Seq[Property] = columnsIndex ++ columnsBool ++ columnsInt
-
-  def isValidBoolColumnName(s: String): Boolean = columnsBool.map(_.name).contains(s)
-  def isValidIntColumnName(s: String): Boolean = columnsInt.map(_.name).contains(s)
-  def isValidIndexColumnName(s: String): Boolean = columnsIndex.map(_.name).contains(s)
   def isValidFilterColumnName(s: String): Boolean = isValidIntColumnName(s) || isValidBoolColumnName(s)
-
-  def isBoolValue(s: String): Boolean = s == "true" || s == "false"
-  def isNumericCondition(s: String): Boolean = {
-    Seq("=", "<=", ">=", "<", ">", "<>", "!=").exists(op => {
-      if (s.filter(_ > ' ').startsWith(op)) s.filter(_ > ' ').substring(op.length).forall(_.isDigit)
-      else false
-    })
-  }
-
-  def isValidQueryFilter(p: Parameter): Boolean = {
-    (isValidBoolColumnName(p.name) && isBoolValue(p.value)) || (isValidIntColumnName(p.name) && isNumericCondition(p.value))
-  }
-
-  // assumes valid conditions
-  def queryCondition(p: Parameter): String = {
-    val escapedColumnName = s""""${p.name}""""
-    if (isValidBoolColumnName(p.name))
-      (if (p.value == "false") "NOT " else "") + escapedColumnName
-    else escapedColumnName + p.value.filter(_ > ' ')
-  }
 
   // CVT: "truncation"
 
-  private def columnsBool: Seq[Property] = Seq(
+  override protected def transformParameter(p: Parameter): Parameter = p
+
+  protected def columnsIndex: Seq[Property] = Seq(
+    "cvt_index", // CVT
+    "symcubic_index", // CVT
+    "vt_index" // VT
+  ).map(f => Property(f, "index"))
+
+  protected def columnsBool: Seq[Property] = Seq(
     "has_multiple_edges",
     "is_arc_transitive",
     "is_bipartite",
@@ -59,7 +41,7 @@ object GraphColumns {
     "is_spx"
   ).map(f => Property(f, "bool"))
 
-  private def columnsInt: Seq[Property] = Seq(
+  protected def columnsInt: Seq[Property] = Seq(
     "order",
 //    "average_degree",
     "chromatic_index",
@@ -73,10 +55,6 @@ object GraphColumns {
     "triangles_count"
   ).map(f => Property(f, "numeric"))
 
-  private def columnsIndex: Seq[Property] = Seq(
-    "cvt_index", // CVT
-    "symcubic_index", // CVT
-    "vt_index" // VT
-  ).map(f => Property(f, "index"))
+  protected def columnsString: Seq[Property] = Seq()
 
 }

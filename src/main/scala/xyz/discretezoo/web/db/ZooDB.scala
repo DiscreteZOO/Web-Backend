@@ -98,13 +98,11 @@ object ZooDB {
   }
 
   def countManiplexes(collections: Seq[String], filters: Seq[String]): Int = {
-    println(filters)
     val db = connect
     val q = sql"""
          SELECT COUNT("UUID") FROM maniplexes
          #${getWhere(collections, filters)};
        """.as[Int]
-    println(s"""SELECT COUNT("UUID") FROM maniplexes ${getWhere(collections, filters)};""")
     val f: Future[Seq[Int]] = db.run(q)
     val result = Await.result(f, Duration("Inf")).head
     db.close()
