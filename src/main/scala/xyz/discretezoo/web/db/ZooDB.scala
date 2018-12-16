@@ -56,10 +56,6 @@ object ZooDB {
          LIMIT #$limit OFFSET #$offset;
        """.as[GraphAllColumns]
     db.run(q)
-//    val f: Future[Seq[GraphAllColumns]] =
-//    val result = Await.result(f, Duration("Inf"))
-//    db.close()
-//    result
   }
 
   def getManiplexes(collections: Seq[String], filters: Seq[String], limit: Int, order: Seq[OrderBy], page: Int): Future[Seq[ManiplexAllColumns]] = {
@@ -70,19 +66,15 @@ object ZooDB {
     }
     val db = connect
     val q = sql"""
-         SELECT "ORBITS", "RANK", "SMALL_GROUP_ID", "SMALL_GROUP_ORDER", "IS_POLYTOPE", "IS_REGULAR", "SYMMETRY_TYPE" FROM maniplexes
+         SELECT #${ManiplexColumns.getColumnList} FROM maniplexes
          #${getWhere(collections, filters)}
          #$orderBy
          LIMIT #$limit OFFSET #$offset;
        """.as[ManiplexAllColumns]
     db.run(q)
-//    val f: Future[Seq[ManiplexAllColumns]] =
-//    val result = Await.result(f, Duration("Inf"))
-//    db.close()
-//    result
   }
 
-  def countGraphs(collections: Seq[String], filters: Seq[String]): Int = {
+  def countGraphs(collections: Seq[String], filters: Seq[String]): Future[Int] = {
     val db = connect
     val q = sql"""
          SELECT COUNT(graph.zooid) FROM graph
@@ -91,22 +83,16 @@ object ZooDB {
          LEFT JOIN graph_vt ON graph.zooid = graph_vt.zooid
          #${getWhere(collections, filters)};
        """.as[Int]
-    val f: Future[Seq[Int]] = db.run(q)
-    val result = Await.result(f, Duration("Inf")).head
-    db.close()
-    result
+    db.run(q.head)
   }
 
-  def countManiplexes(collections: Seq[String], filters: Seq[String]): Int = {
+  def countManiplexes(collections: Seq[String], filters: Seq[String]): Future[Int] = {
     val db = connect
     val q = sql"""
          SELECT COUNT("UUID") FROM maniplexes
          #${getWhere(collections, filters)};
        """.as[Int]
-    val f: Future[Seq[Int]] = db.run(q)
-    val result = Await.result(f, Duration("Inf")).head
-    db.close()
-    result
+    db.run(q.head)
   }
 
   object Filters {

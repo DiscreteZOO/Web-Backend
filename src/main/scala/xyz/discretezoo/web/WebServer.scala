@@ -12,6 +12,7 @@ import scala.util.{Failure, Success}
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
 import scala.io.StdIn
 import db.ZooDB._
+import spray.json.JsObject
 import xyz.discretezoo.web.db.{GraphColumns, ManiplexColumns, ZooDB}
 
 object WebServer extends Directives with JsonSupport {
@@ -36,57 +37,56 @@ object WebServer extends Directives with JsonSupport {
 
     lazy val routes: Route = cors() {
       post {
-        pathPrefix("count") {
-          path("graphs") {
+        path("count") {
             entity(as[SearchParameters]) {
               p => {
-                val f = maybeFilters("graphs", p.filters)
-                val count = countGraphs(p.collections, f)
-                complete(Count(count))
+                ctx => {
+                  val f = maybeFilters(p.objects, p.filters)
+                  val count = for {
+                    c <- p.objects match {
+                      case "graphs" => countGraphs(p.collections, f)
+                      case "maniplexes" => countManiplexes(p.collections, f)
+                    }
+                  } yield Count(c)
+                  def local(m: Count) = { ctx.complete(m) }
+                  count.flatMap(local)
+                }
               }
-            }
-          } ~ path("maniplexes") {
-            entity(as[SearchParameters]) {
-              p => {
-                val f = maybeFilters("maniplexes", p.filters)
-                val count = countManiplexes(p.collections, f)
-                complete(Count(count))
-              }
-            }
           }
-        } ~ pathPrefix("results") {
-          path("graphs") {
+        } ~ path("results") {
             entity(as[ResultsParameters]) { p => {
                 ctx => {
-                  val filters = maybeFilters("graphs", p.parameters.filters)
-                  val count = countGraphs(p.parameters.collections, filters)
-                  val pages = (count / p.pageSize).ceil.toInt
+                  val filters = maybeFilters(p.parameters.objects, p.parameters.filters)
                   val order = p.orderBy.map({ case Parameter(column, ord) => OrderBy(column, ord) })
-                  val actualPage = if (p.page >= 1 && p.page <= pages) p.page else 1
-                  val resultsFuture = ZooDB.getGraphs(p.parameters.collections, filters, p.pageSize, order, actualPage)
 
-                  def local(m: Seq[GraphAllColumns]) = { ctx.complete(m) }
-                  resultsFuture.flatMap(local)
+                  p.parameters.objects match {
+                    case "graphs" => {
+                      val f = countGraphs(p.parameters.collections, filters).flatMap(count => {
+                        val pages = (count / p.pageSize).ceil.toInt
+                        val actualPage = if (p.page >= 1 && p.page <= pages) p.page else 1
+                        getGraphs(p.parameters.collections, filters, p.pageSize, order, actualPage).map(rows => {
+                          SearchResult[GraphAllColumns](pages, rows.toList)
+                        })
+                      })
+                      def local(m: SearchResult[GraphAllColumns]) = { ctx.complete(m) }
+                      f.flatMap(local)
+                    }
+                    case "maniplexes" => {
+                      val f = countManiplexes(p.parameters.collections, filters).flatMap(count => {
+                        val pages = (count / p.pageSize).ceil.toInt
+                        val actualPage = if (p.page >= 1 && p.page <= pages) p.page else 1
+                        getManiplexes(p.parameters.collections, filters, p.pageSize, order, actualPage).map(rows => {
+                          SearchResult[ManiplexAllColumns](pages, rows.toList)
+                        })
+                      })
+                      def local(m: SearchResult[ManiplexAllColumns]) = { ctx.complete(m) }
+                      f.flatMap(local)
+                    }
+                  }
 
-//                  def local(m: GraphResult) = { ctx.complete(m) }
-//                  resultsFuture.map(d => GraphResult(pages, d)).flatMap(local)
+
                 }
             } }
-          } ~ path("maniplexes") {
-            entity(as[ResultsParameters]) { p => {
-              ctx => {
-                val filters = maybeFilters("maniplexes", p.parameters.filters)
-                val count = countManiplexes(p.parameters.collections, filters)
-                val pages = (count / p.pageSize).ceil.toInt
-                val order = p.orderBy.map({ case Parameter(column, ord) => OrderBy(column, ord) })
-                val actualPage = if (p.page >= 1 && p.page <= pages) p.page else 1
-                val resultsFuture = ZooDB.getManiplexes(p.parameters.collections, filters, p.pageSize, order, actualPage)
-
-                def local(m: Seq[ManiplexAllColumns]) = { ctx.complete(m) }
-                resultsFuture.flatMap(local)
-              }
-            } }
-          }
         }
       }
 
@@ -101,7 +101,7 @@ object WebServer extends Directives with JsonSupport {
     println(s"Server online at http://$hostname:$port/\nPress CTRL+C to stop...")
 
     // add a hook to shutdown via shutdown
-    val mainThread = Thread.currentThread();
+    val mainThread = Thread.currentThread()
     Runtime.getRuntime.addShutdownHook(new Thread() {override def run = {
       println(s"Received CTRL-C, exiting")
       keepRunning = false
@@ -116,10 +116,11 @@ object WebServer extends Directives with JsonSupport {
 
 }
 
-final case class Count(value: Int)
+case class Count(value: Int)
 
-final case class ResultsParameters(page: Int, pageSize: Int, parameters: SearchParameters, orderBy: List[Parameter])
-final case class SearchParameters(collections: List[String], filters: List[Parameter])
-final case class Parameter(name: String, value: String)
-//final case class GraphResult(pages: Int, data: Seq[GraphAllColumns])
+case class ResultsParameters(page: Int, pageSize: Int, parameters: SearchParameters, orderBy: List[Parameter])
+case class SearchParameters(objects: String, collections: List[String], filters: List[Parameter])
+case class Parameter(name: String, value: String)
+case class SearchResult[T](pages: Int, data: List[T])
+//case class Test(data: List[GraphBooleanColumns])
 //final case class ManiplexResult(pages: Int, data: Seq[ManiplexAllColumns])
