@@ -1,11 +1,11 @@
-package xyz.discretezoo.web.db
+package xyz.discretezoo.web.db.model
 
 import xyz.discretezoo.web.Parameter
-import xyz.discretezoo.web.db.model.Columns
+import xyz.discretezoo.web.db.Property
 
 object ManiplexColumns extends Columns {
 
-  def isValidFilterColumnName(s: String): Boolean = {
+  override def isValidFilterColumnName(s: String): Boolean = {
     val testableName = s.toUpperCase
     isValidIntColumnName(testableName) || isValidBoolColumnName(testableName) || isValidStringColumnName(testableName)
   }

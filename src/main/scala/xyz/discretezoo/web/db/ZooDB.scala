@@ -2,6 +2,7 @@ package xyz.discretezoo.web.db
 
 import slick.jdbc.{GetResult, SQLActionBuilder}
 import xyz.discretezoo.web.db.ZooPostgresProfile.api._
+import xyz.discretezoo.web.db.model.{GraphColumns, ManiplexColumns}
 import xyz.discretezoo.web.db.v1._
 
 //import xyz.discretezoo.web.db.v1.Graphs

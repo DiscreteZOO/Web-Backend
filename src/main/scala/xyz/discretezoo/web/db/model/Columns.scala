@@ -12,6 +12,8 @@ abstract class Columns {
 
   protected def transformParameter(p: Parameter): Parameter
 
+  def isValidFilterColumnName(s: String): Boolean
+
   def all: Seq[Property] = columnsIndex ++ columnsBool ++ columnsInt ++ columnsString
   def getColumnList: String = all.map(p => s""""${p.name}"""").mkString(", ")
 

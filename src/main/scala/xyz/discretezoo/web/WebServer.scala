@@ -2,18 +2,13 @@ package xyz.discretezoo.web
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.marshalling.ToResponseMarshallable
-import akka.http.scaladsl.server.{Directives, Route, StandardRoute}
+import akka.http.scaladsl.server.{Directives, Route}
 import akka.stream.ActorMaterializer
-import akka.http.scaladsl.model.headers._
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 
-import scala.util.{Failure, Success}
-import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
-import scala.io.StdIn
+import scala.concurrent.ExecutionContext
 import db.ZooDB._
-import spray.json.JsObject
-import xyz.discretezoo.web.db.{GraphColumns, ManiplexColumns, ZooDB}
+import xyz.discretezoo.web.db.model.{GraphColumns, ManiplexColumns}
 
 object WebServer extends Directives with JsonSupport {
 
@@ -122,5 +117,3 @@ case class ResultsParameters(page: Int, pageSize: Int, parameters: SearchParamet
 case class SearchParameters(objects: String, collections: List[String], filters: List[Parameter])
 case class Parameter(name: String, value: String)
 case class SearchResult[T](pages: Int, data: List[T])
-//case class Test(data: List[GraphBooleanColumns])
-//final case class ManiplexResult(pages: Int, data: Seq[ManiplexAllColumns])
