@@ -2,7 +2,9 @@ package xyz.discretezoo.web
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json._
-import xyz.discretezoo.web.db.ZooDB._
+import xyz.discretezoo.web.db.model.Graph._
+import xyz.discretezoo.web.db.model.{GraphRecord, ManiplexRecord}
+import xyz.discretezoo.web.db.model.Maniplex._
 
 // collect your json format instances into a support trait:
 trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
@@ -16,14 +18,14 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
   implicit def formatSearchResults[T:JsonFormat]: RootJsonFormat[SearchResult[T]] =
     rootFormat(lazyFormat(jsonFormat2(SearchResult.apply[T])))
 
-  implicit val formatGraphBooleanColumns: RootJsonFormat[GraphBooleanColumns] = jsonFormat18(GraphBooleanColumns)
-  implicit val formatGraphNumericColumns: RootJsonFormat[GraphNumericColumns] = jsonFormat10(GraphNumericColumns)
-  implicit val formatGraphIndexColumns: RootJsonFormat[GraphIndexColumns] = jsonFormat3(GraphIndexColumns)
-  implicit val formatGraphAllColumns: RootJsonFormat[GraphAllColumns] = jsonFormat4(GraphAllColumns)
+  implicit val formatGraphBooleanColumns: RootJsonFormat[GraphBoolean] = jsonFormat18(GraphBoolean)
+  implicit val formatGraphNumericColumns: RootJsonFormat[GraphNumeric] = jsonFormat10(GraphNumeric)
+  implicit val formatGraphIndexColumns: RootJsonFormat[GraphIndex] = jsonFormat3(GraphIndex)
+  implicit val formatGraphAllColumns: RootJsonFormat[GraphRecord] = jsonFormat4(GraphRecord)
 
-  implicit val formatManiplexBooleanColumns: RootJsonFormat[ManiplexBooleanColumns] = jsonFormat2(ManiplexBooleanColumns)
-  implicit val formatManiplexNumericColumns: RootJsonFormat[ManiplexNumericColumns] = jsonFormat4(ManiplexNumericColumns)
-  implicit val formatManiplexStringColumns: RootJsonFormat[ManiplexStringColumns] = jsonFormat1(ManiplexStringColumns)
-  implicit val formatManiplexAllColumns: RootJsonFormat[ManiplexAllColumns] = jsonFormat3(ManiplexAllColumns)
+  implicit val formatManiplexBooleanColumns: RootJsonFormat[ManiplexBoolean] = jsonFormat2(ManiplexBoolean)
+  implicit val formatManiplexNumericColumns: RootJsonFormat[ManiplexNumeric] = jsonFormat4(ManiplexNumeric)
+  implicit val formatManiplexStringColumns: RootJsonFormat[ManiplexString] = jsonFormat1(ManiplexString)
+  implicit val formatManiplexAllColumns: RootJsonFormat[ManiplexRecord] = jsonFormat3(ManiplexRecord)
 
 }

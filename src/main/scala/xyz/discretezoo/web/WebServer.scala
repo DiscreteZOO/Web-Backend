@@ -8,14 +8,14 @@ import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 
 import scala.concurrent.ExecutionContext
 import db.ZooDB._
-import xyz.discretezoo.web.db.model.{GraphColumns, ManiplexColumns}
+import xyz.discretezoo.web.db.model.{Graph, GraphRecord, Maniplex, ManiplexRecord}
 
 object WebServer extends Directives with JsonSupport {
 
   private def maybeFilters(objects: String, filters: Seq[Parameter]): Seq[String] = {
     objects match {
-      case "graphs" => filters.filter(GraphColumns.isValidQueryFilter).map(GraphColumns.queryCondition)
-      case "maniplexes" => filters.filter(ManiplexColumns.isValidQueryFilter).map(ManiplexColumns.queryCondition)
+      case "graphs" => filters.filter(Graph.isValidQueryFilter).map(Graph.queryCondition)
+      case "maniplexes" => filters.filter(Maniplex.isValidQueryFilter).map(Maniplex.queryCondition)
     }
   }
 
@@ -37,14 +37,11 @@ object WebServer extends Directives with JsonSupport {
               p => {
                 ctx => {
                   val f = maybeFilters(p.objects, p.filters)
-                  val count = for {
-                    c <- p.objects match {
-                      case "graphs" => countGraphs(p.collections, f)
-                      case "maniplexes" => countManiplexes(p.collections, f)
-                    }
+                  val cnt = for {
+                    c <- count(p.objects, p.collections, f)
                   } yield Count(c)
                   def local(m: Count) = { ctx.complete(m) }
-                  count.flatMap(local)
+                  cnt.flatMap(local)
                 }
               }
           }
@@ -56,25 +53,25 @@ object WebServer extends Directives with JsonSupport {
 
                   p.parameters.objects match {
                     case "graphs" => {
-                      val f = countGraphs(p.parameters.collections, filters).flatMap(count => {
+                      val f = count("graphs", p.parameters.collections, filters).flatMap(count => {
                         val pages = (count / p.pageSize).ceil.toInt
                         val actualPage = if (p.page >= 1 && p.page <= pages) p.page else 1
                         getGraphs(p.parameters.collections, filters, p.pageSize, order, actualPage).map(rows => {
-                          SearchResult[GraphAllColumns](pages, rows.toList)
+                          SearchResult[GraphRecord](pages, rows.toList)
                         })
                       })
-                      def local(m: SearchResult[GraphAllColumns]) = { ctx.complete(m) }
+                      def local(m: SearchResult[GraphRecord]) = { ctx.complete(m) }
                       f.flatMap(local)
                     }
                     case "maniplexes" => {
-                      val f = countManiplexes(p.parameters.collections, filters).flatMap(count => {
+                      val f = count("maniplexes", p.parameters.collections, filters).flatMap(count => {
                         val pages = (count / p.pageSize).ceil.toInt
                         val actualPage = if (p.page >= 1 && p.page <= pages) p.page else 1
                         getManiplexes(p.parameters.collections, filters, p.pageSize, order, actualPage).map(rows => {
-                          SearchResult[ManiplexAllColumns](pages, rows.toList)
+                          SearchResult[ManiplexRecord](pages, rows.toList)
                         })
                       })
-                      def local(m: SearchResult[ManiplexAllColumns]) = { ctx.complete(m) }
+                      def local(m: SearchResult[ManiplexRecord]) = { ctx.complete(m) }
                       f.flatMap(local)
                     }
                   }

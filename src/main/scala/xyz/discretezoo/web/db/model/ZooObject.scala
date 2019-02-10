@@ -1,18 +1,25 @@
 package xyz.discretezoo.web.db.model
 
 import xyz.discretezoo.web.Parameter
-import xyz.discretezoo.web.db.Property
+import xyz.discretezoo.web.db.{Property, ZooPostgresProfile}
 
-abstract class Columns {
+abstract class ZooObject {
 
-  protected def columnsIndex: Seq[Property]
-  protected def columnsBool: Seq[Property]
-  protected def columnsInt: Seq[Property]
-  protected def columnsString: Seq[Property]
+  protected val indexColumnNames: Seq[String]
+  protected def columnsIndex: Seq[Property] = indexColumnNames.map(f => Property(f, "index"))
+
+  protected val boolColumnNames: Seq[String]
+  protected def columnsBool: Seq[Property] = boolColumnNames.map(f => Property(f, "bool"))
+
+  protected val intColumnNames: Seq[String]
+  protected def columnsInt: Seq[Property] = intColumnNames.map(f => Property(f, "numeric"))
+
+  protected val stringColumnNames: Seq[String]
+  protected def columnsString: Seq[Property] = stringColumnNames.map(f => Property(f, "string"))
 
   protected def transformParameter(p: Parameter): Parameter
 
-  def isValidFilterColumnName(s: String): Boolean
+  def isValidFilterColumnName(s: String): Boolean = isValidIntColumnName(s) || isValidBoolColumnName(s)
 
   def all: Seq[Property] = columnsIndex ++ columnsBool ++ columnsInt ++ columnsString
   def getColumnList: String = all.map(p => s""""${p.name}"""").mkString(", ")
