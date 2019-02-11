@@ -3,7 +3,7 @@ package xyz.discretezoo.web.db
 import slick.lifted.Rep
 import xyz.discretezoo.web.db.ZooPostgresProfile.api._
 
-trait Filter[T <: Table[_ <: ZooObject]] {
+trait Filter[T <: ZooTable] {
 
   def boolean(o: T, condition: BooleanCondition): Rep[Boolean]
   def numeric(o: T, condition: NumericCondition): Rep[Boolean]

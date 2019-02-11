@@ -2,7 +2,9 @@ package xyz.discretezoo.web.db.ZooManiplex
 
 import xyz.discretezoo.web.db.ZooObject
 
-case class Maniplex(
+sealed trait ManiplexObject extends ZooObject
+
+case class ManiplexMain(
  zooid: Int,
  // boolean
  isPolytope: Option[Boolean],
@@ -14,5 +16,5 @@ case class Maniplex(
  smallGroupOrder: Option[Int]
  // string
 // symmetryType: Option[String]
- )
-extends ZooObject
+)
+extends ManiplexObject

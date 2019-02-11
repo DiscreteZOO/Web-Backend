@@ -91,8 +91,6 @@ object ZooDB {
 
   object Filters {
 
-//    def relevant: Seq[Property] = Graph.all.filter(p => hasDistinctValues("graph", p.name) > 1)
-
     def hasDistinctValues(select: String, column: String): Int = {
       val q = sql"""SELECT COUNT(*) FROM (SELECT DISTINCT "#$column" FROM "#$select") AS temp;""".as[Int].head
       val f: Future[Int] = db.run(q)

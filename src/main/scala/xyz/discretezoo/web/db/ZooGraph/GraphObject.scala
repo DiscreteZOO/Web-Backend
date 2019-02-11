@@ -2,7 +2,9 @@ package xyz.discretezoo.web.db.ZooGraph
 
 import xyz.discretezoo.web.db.ZooObject
 
-case class Graph(
+sealed trait GraphObject extends ZooObject
+
+case class GraphMain(
   zooid: Int,
   order: Int,
   // booleans
@@ -28,5 +30,15 @@ case class Graph(
   oddGirth: Option[Int],
   size: Option[Int],
   trianglesCount: Option[Int])
-extends ZooObject
+extends GraphObject
 
+case class GraphCVT(
+ zooid: Int,
+ // index
+ indexCVT: Option[Int],
+ indexSymCubic: Option[Int],
+ // booleans
+ isMoebiusLadder: Option[Boolean],
+ isPrism: Option[Boolean],
+ isSPX: Option[Boolean])
+extends GraphObject

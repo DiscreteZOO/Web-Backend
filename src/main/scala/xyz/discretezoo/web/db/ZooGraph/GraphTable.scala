@@ -2,12 +2,17 @@ package xyz.discretezoo.web.db.ZooGraph
 
 import slick.collection.heterogeneous.HNil
 import slick.lifted.ProvenShape
-import xyz.discretezoo.web.db.TableMetaData
+import xyz.discretezoo.web.db.ZooTable
 import xyz.discretezoo.web.db.ZooPostgresProfile.api._
 
-final class GraphTable(tag: Tag) extends Table[Graph](tag, "ZOO_GRAPH") {
+sealed trait GraphTable extends ZooTable {
+  def zooid: Rep[Int]
+}
 
-  def zooid: Rep[Int] = column[Int]("ZOOID", O.PrimaryKey)
+
+final class GraphTableMain(tag: Tag) extends Table[GraphMain](tag, "ZOO_GRAPH") with GraphTable {
+
+  override def zooid: Rep[Int] = column[Int]("ZOOID", O.PrimaryKey)
   def order: Rep[Int] = column[Int]("ORDER")
 
   def isArcTransitive: Rep[Option[Boolean]] = column[Option[Boolean]]("IS_ARC_TRANSITIVE")
@@ -33,7 +38,7 @@ final class GraphTable(tag: Tag) extends Table[Graph](tag, "ZOO_GRAPH") {
   def size: Rep[Option[Int]] = column[Option[Int]]("SIZE")
   def trianglesCount: Rep[Option[Int]] = column[Option[Int]]("TRIANGLES_COUNT")
 
-  def * : ProvenShape[Graph] = (
+  def * : ProvenShape[GraphMain] = (
     zooid :: order ::
       // booleans
       isArcTransitive :: isBipartite :: isCayley :: isDistanceRegular :: isDistanceTransitive :: isEdgeTransitive ::
@@ -42,11 +47,29 @@ final class GraphTable(tag: Tag) extends Table[Graph](tag, "ZOO_GRAPH") {
       chromaticIndex :: cliqueNumber :: connectedComponentsNumber :: diameter :: girth :: oddGirth :: size ::
       trianglesCount ::
       HNil
-    ).mapTo[Graph]
+    ).mapTo[GraphMain]
 
 }
 
-object GraphTable extends TableMetaData {
-  override val booleanNotNullable: Seq[String] = Seq()
-  override val numericNotNullable: Seq[String] = Seq("zooid", "order")
+
+final class GraphTableCVT(tag: Tag) extends Table[GraphCVT](tag, "ZOO_GRAPH_CVT") with GraphTable {
+
+  override def zooid: Rep[Int] = column[Int]("ZOOID", O.PrimaryKey)
+
+  def indexCVT: Rep[Option[Int]] = column[Option[Int]]("INDEX_CVT")
+  def indexSymCubic: Rep[Option[Int]] = column[Option[Int]]("INDEX_SYMCUBIC")
+
+  def isMoebiusLadder: Rep[Option[Boolean]] = column[Option[Boolean]]("IS_MOEBIUS_LADDER")
+  def isPrism: Rep[Option[Boolean]] = column[Option[Boolean]]("IS_PRISM")
+  def isSPX: Rep[Option[Boolean]] = column[Option[Boolean]]("IS_SPX")
+
+  def * : ProvenShape[GraphCVT] = (
+    zooid ::
+      // index
+      indexCVT :: indexSymCubic ::
+      // booleans
+      isMoebiusLadder :: isPrism :: isSPX ::
+      HNil
+    ).mapTo[GraphCVT]
+
 }
