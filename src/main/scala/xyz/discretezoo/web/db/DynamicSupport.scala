@@ -7,13 +7,18 @@ import slick.lifted.ColumnOrdered
 import slick.lifted.Rep
 import slick.lifted.Ordered
 
-object DynamicSortBySupport {
+// https://stackoverflow.com/questions/42383842/dynamic-order-by-in-scala-slick-with-several-columns
+
+object DynamicSupport {
 
   type ColumnOrdering = (String, Direction) //Just a type alias
+
   trait ColumnSelector {
     val select: Map[String, Rep[_]] //The runtime map between string names and table columns
   }
+
   implicit class MultiSortableQuery[A <: ColumnSelector, B, C[_]](query: Query[A, B, C]) {
+
     def dynamicSortBy(sortBy: Seq[ColumnOrdering]): Query[A, B, C]  =
       sortBy.foldRight(query){ //Fold right is reversing order
         case ((sortColumn, sortOrder), queryToSort) =>
@@ -21,5 +26,6 @@ object DynamicSortBySupport {
           val sortColumnRep: A => Rep[_] = _.select(sortColumn)
           queryToSort.sortBy(sortColumnRep)(sortOrderRep)
       }
+
   }
 }

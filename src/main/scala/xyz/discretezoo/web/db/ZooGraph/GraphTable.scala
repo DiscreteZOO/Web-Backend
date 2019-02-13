@@ -2,9 +2,11 @@ package xyz.discretezoo.web.db.ZooGraph
 
 import slick.collection.heterogeneous.HNil
 import slick.lifted.ProvenShape
+import xyz.discretezoo.web.db.DynamicSupport
 import xyz.discretezoo.web.db.ZooPostgresProfile.api._
+import xyz.discretezoo.web.db.DynamicSupport.ColumnSelector
 
-final class GraphTable(tag: Tag) extends Table[Graph](tag, "ZOO_GRAPH") {
+final class GraphTable(tag: Tag) extends Table[Graph](tag, "ZOO_GRAPH") with DynamicSupport.ColumnSelector {
 
   def zooid: Rep[Int] = column[Int]("ZOOID", O.PrimaryKey)
   def order: Rep[Int] = column[Int]("ORDER")
@@ -51,5 +53,39 @@ final class GraphTable(tag: Tag) extends Table[Graph](tag, "ZOO_GRAPH") {
       trianglesCount ::
       HNil
     ).mapTo[Graph]
+  
+  val select: Map[String, Rep[_]] = Map(
+    "zooid" -> this.zooid,
+    "order" -> this.order,
+    
+    "index_cvt" -> this.indexCVT,
+    "index_symcubic" -> this.indexSymCubic,
+    "index_vt" -> this.indexVT,
+
+    "is_arc_transitive" -> this.isArcTransitive,
+    "is_bipartite" -> this.isBipartite,
+    "is_cayley" -> this.isCayley,
+    "is_distance_regular" -> this.isDistanceRegular,
+    "is_distance_transitive" -> this.isDistanceTransitive,
+    "is_edge_transitive" -> this.isEdgeTransitive,
+    "is_eulerian" -> this.isEulerian,
+    "is_hamiltonian" -> this.isHamiltonian,
+    "is_moebius_ladder" -> this.isMoebiusLadder,
+    "is_overfull" -> this.isOverfull,
+    "is_partial_cube" -> this.isPartialCube,
+    "is_prism" -> this.isPrism,
+    "is_split" -> this.isSplit,
+    "is_spx" -> this.isSPX,
+    "is_strongly_regular" -> this.isStronglyRegular,
+
+    "chromatic_index" -> this.chromaticIndex,
+    "clique_number" -> this.cliqueNumber,
+    "connected_components_number" -> this.connectedComponentsNumber,
+    "diameter" -> this.diameter,
+    "girth" -> this.girth,
+    "odd_girth" -> this.oddGirth,
+    "size" -> this.size,
+    "triangles_count" -> this.trianglesCount
+  )
 
 }

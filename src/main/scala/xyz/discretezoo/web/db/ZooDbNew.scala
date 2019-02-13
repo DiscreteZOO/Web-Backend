@@ -6,8 +6,9 @@ import xyz.discretezoo.web.db.ZooGraph._
 import xyz.discretezoo.web.db.ZooManiplex.ManiplexTable
 import xyz.discretezoo.web.db.ZooPostgresProfile.api._
 import slick.collection.heterogeneous.HNil
+import slick.lifted.TableQuery
 
-import scala.concurrent.duration.Duration
+import slick.ast.Ordering
 import scala.concurrent.{Await, ExecutionContext, Future}
 
 object ZooDbNew {
@@ -17,36 +18,40 @@ object ZooDbNew {
   // needed for the future flatMap/onComplete in the end
   implicit val executionContext: ExecutionContext = system.dispatcher
 
-  private val db: ZooPostgresProfile.backend.DatabaseDef = Database.forURL(
+  val db: ZooPostgresProfile.backend.DatabaseDef = Database.forURL(
     scala.util.Properties.envOrElse("ZOODB_JDBC", "jdbc:postgresql://localhost:5432/discretezoo2"),
     scala.util.Properties.envOrElse("ZOODB_USER", "discretezoo"),
     scala.util.Properties.envOrElse("ZOODB_PASS", "D!screteZ00"),
     null,
     "org.postgresql.Driver")
 
-  private val graphs = TableQuery[GraphTable]
-  private val maniplexes = TableQuery[ManiplexTable]
+  object graphs extends TableQuery(new GraphTable(_))
 
   def t(g: GraphTable) = g.indexCVT
 
-  def getGraphs(collections: Seq[String], filters: Seq[Condition], limit: Int, page: Int): Future[Seq[Graph]] = {  // Seq[OrderBy]
+  def getGraphs(collections: Seq[String], filters: Seq[Condition], sort: Seq[OrderBy], limit: Int, page: Int): Future[Seq[Graph]] = {
     val offset = (page - 1) * limit
+    val sortBy = sort.map(s => s.order match {
+      case "ASC" => Some((s.field, Ordering.Asc))
+      case "DESC" => Some((s.field, Ordering.Desc))
+      case _ => None
+    }).collect({ case Some(v) => v })
     val future = for {
       graph <- graphs
         .filterIf(collections.nonEmpty)(g => GraphColumns.filterCollections(g, collections))
         .filter(g => GraphColumns.filter(g, filters))
         .drop(offset).take(limit)
-//        .sortBy(g => (t(g).desc.nullsFirst :: g.isSPX.asc.nullsDefault :: HNil)) //(t(g).desc.nullsFirst, g.isSPX.asc.nullsDefault)
+        .dynamicSortBy(sortBy)
         .result
     } yield graph
     db.run(future)
   }
 
-  def create(): Unit = {
-    val setup = DBIO.seq(graphs.schema.create, maniplexes.schema.create)
-    try {
-      Await.result(ZooDbNew.db.run(setup), Duration.Inf)
-    }
-  }
+//  def create(): Unit = {
+//    val setup = DBIO.seq(graphs.schema.create, maniplexes.schema.create)
+//    try {
+//      Await.result(ZooDbNew.db.run(setup), Duration.Inf)
+//    }
+//  }
 
 }
