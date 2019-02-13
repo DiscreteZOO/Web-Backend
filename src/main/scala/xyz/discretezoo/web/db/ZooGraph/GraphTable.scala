@@ -2,18 +2,16 @@ package xyz.discretezoo.web.db.ZooGraph
 
 import slick.collection.heterogeneous.HNil
 import slick.lifted.ProvenShape
-import xyz.discretezoo.web.db.ZooTable
 import xyz.discretezoo.web.db.ZooPostgresProfile.api._
 
-sealed trait GraphTable extends ZooTable {
-  def zooid: Rep[Int]
-}
+final class GraphTable(tag: Tag) extends Table[Graph](tag, "ZOO_GRAPH") {
 
-
-final class GraphTableMain(tag: Tag) extends Table[GraphMain](tag, "ZOO_GRAPH") with GraphTable {
-
-  override def zooid: Rep[Int] = column[Int]("ZOOID", O.PrimaryKey)
+  def zooid: Rep[Int] = column[Int]("ZOOID", O.PrimaryKey)
   def order: Rep[Int] = column[Int]("ORDER")
+
+  def indexCVT: Rep[Option[Int]] = column[Option[Int]]("INDEX_CVT")
+  def indexSymCubic: Rep[Option[Int]] = column[Option[Int]]("INDEX_SYMCUBIC")
+  def indexVT: Rep[Option[Int]] = column[Option[Int]]("INDEX_VT")
 
   def isArcTransitive: Rep[Option[Boolean]] = column[Option[Boolean]]("IS_ARC_TRANSITIVE")
   def isBipartite: Rep[Option[Boolean]] = column[Option[Boolean]]("IS_BIPARTITE")
@@ -22,11 +20,13 @@ final class GraphTableMain(tag: Tag) extends Table[GraphMain](tag, "ZOO_GRAPH") 
   def isDistanceTransitive: Rep[Option[Boolean]] = column[Option[Boolean]]("IS_DISTANCE_TRANSITIVE")
   def isEdgeTransitive: Rep[Option[Boolean]] = column[Option[Boolean]]("IS_EDGE_TRANSITIVE")
   def isEulerian: Rep[Option[Boolean]] = column[Option[Boolean]]("IS_EULERIAN")
-  def isForest: Rep[Option[Boolean]] = column[Option[Boolean]]("IS_FOREST")
   def isHamiltonian: Rep[Option[Boolean]] = column[Option[Boolean]]("IS_HAMILTONIAN")
+  def isMoebiusLadder: Rep[Option[Boolean]] = column[Option[Boolean]]("IS_MOEBIUS_LADDER")
   def isOverfull: Rep[Option[Boolean]] = column[Option[Boolean]]("IS_OVERFULL")
   def isPartialCube: Rep[Option[Boolean]] = column[Option[Boolean]]("IS_PARTIAL_CUBE")
+  def isPrism: Rep[Option[Boolean]] = column[Option[Boolean]]("IS_PRISM")
   def isSplit: Rep[Option[Boolean]] = column[Option[Boolean]]("IS_SPLIT")
+  def isSPX: Rep[Option[Boolean]] = column[Option[Boolean]]("IS_SPX")
   def isStronglyRegular: Rep[Option[Boolean]] = column[Option[Boolean]]("IS_STRONGLY_REGULAR")
 
   def chromaticIndex: Rep[Option[Int]] = column[Option[Int]]("CHROMATIC_INDEX")
@@ -38,38 +38,18 @@ final class GraphTableMain(tag: Tag) extends Table[GraphMain](tag, "ZOO_GRAPH") 
   def size: Rep[Option[Int]] = column[Option[Int]]("SIZE")
   def trianglesCount: Rep[Option[Int]] = column[Option[Int]]("TRIANGLES_COUNT")
 
-  def * : ProvenShape[GraphMain] = (
+  def * : ProvenShape[Graph] = (
     zooid :: order ::
+      // indexes
+      indexCVT :: indexSymCubic :: indexVT ::
       // booleans
       isArcTransitive :: isBipartite :: isCayley :: isDistanceRegular :: isDistanceTransitive :: isEdgeTransitive ::
-      isEulerian :: isForest :: isHamiltonian :: isOverfull :: isPartialCube :: isSplit :: isStronglyRegular ::
+      isEulerian :: isHamiltonian :: isMoebiusLadder:: isOverfull :: isPartialCube :: isPrism :: isSplit ::
+      isSPX :: isStronglyRegular ::
       // numeric
       chromaticIndex :: cliqueNumber :: connectedComponentsNumber :: diameter :: girth :: oddGirth :: size ::
       trianglesCount ::
       HNil
-    ).mapTo[GraphMain]
-
-}
-
-
-final class GraphTableCVT(tag: Tag) extends Table[GraphCVT](tag, "ZOO_GRAPH_CVT") with GraphTable {
-
-  override def zooid: Rep[Int] = column[Int]("ZOOID", O.PrimaryKey)
-
-  def indexCVT: Rep[Option[Int]] = column[Option[Int]]("INDEX_CVT")
-  def indexSymCubic: Rep[Option[Int]] = column[Option[Int]]("INDEX_SYMCUBIC")
-
-  def isMoebiusLadder: Rep[Option[Boolean]] = column[Option[Boolean]]("IS_MOEBIUS_LADDER")
-  def isPrism: Rep[Option[Boolean]] = column[Option[Boolean]]("IS_PRISM")
-  def isSPX: Rep[Option[Boolean]] = column[Option[Boolean]]("IS_SPX")
-
-  def * : ProvenShape[GraphCVT] = (
-    zooid ::
-      // index
-      indexCVT :: indexSymCubic ::
-      // booleans
-      isMoebiusLadder :: isPrism :: isSPX ::
-      HNil
-    ).mapTo[GraphCVT]
+    ).mapTo[Graph]
 
 }

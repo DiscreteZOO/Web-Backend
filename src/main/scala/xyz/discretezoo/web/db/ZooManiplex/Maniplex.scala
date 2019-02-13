@@ -1,11 +1,11 @@
 package xyz.discretezoo.web.db.ZooManiplex
 
+import java.util.UUID
+
 import xyz.discretezoo.web.db.ZooObject
 
-sealed trait ManiplexObject extends ZooObject
-
-case class ManiplexMain(
- zooid: Int,
+case class Maniplex(
+ UUID: UUID,
  // boolean
  isPolytope: Option[Boolean],
  isRegular: Option[Boolean],
@@ -17,4 +17,4 @@ case class ManiplexMain(
  // string
 // symmetryType: Option[String]
 )
-extends ManiplexObject
+extends ZooObject

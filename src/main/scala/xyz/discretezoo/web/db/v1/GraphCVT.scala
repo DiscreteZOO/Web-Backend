@@ -10,7 +10,7 @@ case class GraphCVT(
                      isPrism: Boolean,
                      isSPX: Boolean,
                      truncation: Option[Int] // foreign key for table graph
-)
+                   )
 
 class GraphsCVT(tag: Tag) extends Table[GraphCVT](tag, "graph_cvt") {
 
