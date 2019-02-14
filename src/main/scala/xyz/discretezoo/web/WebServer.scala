@@ -5,20 +5,17 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.{Directives, Route}
 import akka.stream.ActorMaterializer
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
+import spray.json._
+import DefaultJsonProtocol._
 
 import scala.concurrent.ExecutionContext
-import db.ZooDB._
-import xyz.discretezoo.web.db.model.{Graph, GraphRecord, Maniplex, ManiplexRecord}
+import spray.json.{JsObject, JsValue}
+import xyz.discretezoo.web.db.ZooGraph.Graph
+import xyz.discretezoo.web.db.ZooManiplex.Maniplex
+import xyz.discretezoo.web.db.{ResultParam, SearchParam, ZooDb}
+import xyz.discretezoo.web.db.model.{GraphRecord, ManiplexRecord}
 
 object WebServer extends Directives with JsonSupport {
-
-  private def maybeFilters(objects: String, filters: Seq[Parameter]): Seq[String] = {
-    objects match {
-      case "graphs" => filters.filter(Graph.isValidQueryFilter).map(Graph.queryCondition)
-      case "maniplexes" => filters.filter(Maniplex.isValidQueryFilter).map(Maniplex.queryCondition)
-    }
-  }
-
 
   @volatile var keepRunning = true
   def main(args: Array[String]) {
@@ -36,9 +33,12 @@ object WebServer extends Directives with JsonSupport {
             entity(as[SearchParameters]) {
               p => {
                 ctx => {
-                  val f = maybeFilters(p.objects, p.filters)
+                  val qp = SearchParam.get(p.collections, p.filters)
                   val cnt = for {
-                    c <- count(p.objects, p.collections, f)
+                    c <- p.objects match {
+                      case "graphs" => ZooDb.countGraphs(qp)
+                      case "maniplexes" => ZooDb.countManiplexes(qp)
+                    }
                   } yield Count(c)
                   def local(m: Count) = { ctx.complete(m) }
                   cnt.flatMap(local)
@@ -48,30 +48,27 @@ object WebServer extends Directives with JsonSupport {
         } ~ path("results") {
             entity(as[ResultsParameters]) { p => {
                 ctx => {
-                  val filters = maybeFilters(p.parameters.objects, p.parameters.filters)
-                  val order = p.orderBy.map({ case Parameter(column, ord) => OrderBy(column, ord) })
-
+                  val qp = SearchParam.get(p.parameters.collections, p.parameters.filters)
                   p.parameters.objects match {
                     case "graphs" => {
-                      val f = count("graphs", p.parameters.collections, filters).flatMap(count => {
+                      val f = ZooDb.countGraphs(qp).flatMap(count => {
                         val pages = (count / p.pageSize).ceil.toInt
                         val actualPage = if (p.page >= 1 && p.page <= pages) p.page else 1
-                        getGraphs(p.parameters.collections, filters, p.pageSize, order, actualPage).map(rows => {
-                          SearchResult[GraphRecord](pages, rows.toList)
-                        })
+                        ZooDb.getGraphs(ResultParam.get(actualPage, p.pageSize, qp, p.orderBy))
+                          .map(rows => (pages, rows.toList))
                       })
-                      def local(m: SearchResult[GraphRecord]) = { ctx.complete(m) }
+                      def local(result: (Int, Seq[Graph])) = {
+                        ctx.complete(SearchResult(result._1, result._2.map(_.toJson).toList))
+                      }
                       f.flatMap(local)
                     }
                     case "maniplexes" => {
-                      val f = count("maniplexes", p.parameters.collections, filters).flatMap(count => {
+                      val f = ZooDb.countManiplexes(qp).flatMap(count => {
                         val pages = (count / p.pageSize).ceil.toInt
                         val actualPage = if (p.page >= 1 && p.page <= pages) p.page else 1
-                        getManiplexes(p.parameters.collections, filters, p.pageSize, order, actualPage).map(rows => {
-                          SearchResult[ManiplexRecord](pages, rows.toList)
-                        })
+                        ZooDb.getManiplexes(ResultParam.get(actualPage, p.pageSize, qp, p.orderBy))
                       })
-                      def local(m: SearchResult[ManiplexRecord]) = { ctx.complete(m) }
+                      def local(result: Seq[Maniplex]) = { ctx.complete(result.map(_.toJson)) }
                       f.flatMap(local)
                     }
                   }

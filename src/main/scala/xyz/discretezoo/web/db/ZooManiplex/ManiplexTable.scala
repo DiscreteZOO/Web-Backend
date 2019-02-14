@@ -4,9 +4,11 @@ import java.util.UUID
 
 import slick.collection.heterogeneous.HNil
 import slick.lifted.{ProvenShape, Rep}
+
+import xyz.discretezoo.web.db.DynamicSupport
 import xyz.discretezoo.web.db.ZooPostgresProfile.api._
 
-final class ManiplexTable(tag: Tag) extends Table[Maniplex](tag, "ZOO_MANIPLEX") {
+final class ManiplexTable(tag: Tag) extends Table[Maniplex](tag, "ZOO_MANIPLEX") with DynamicSupport.ColumnSelector {
 
   def uuid: Rep[UUID] = column[UUID]("UUID", O.PrimaryKey)
 
@@ -26,5 +28,21 @@ final class ManiplexTable(tag: Tag) extends Table[Maniplex](tag, "ZOO_MANIPLEX")
       orbits :: rank :: smallGroupId :: smallGroupOrder ::
       HNil
     ).mapTo[Maniplex]
+
+  val select: Map[String, Rep[_]] = Map(
+    "uuid" -> this.uuid,
+
+    "is_polytope" -> this.isPolytope,
+    "is_regular" -> this.isRegular,
+
+    "orbits" -> this.orbits,
+    "rank" -> this.rank,
+    "small_group_id" -> this.smallGroupId,
+    "small_group_order" -> this.smallGroupOrder
+  )
+
+  val inCollection: Map[String, Rep[Boolean]] = Map(
+    "M2" -> true
+  )
 
 }

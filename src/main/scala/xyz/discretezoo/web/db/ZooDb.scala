@@ -2,16 +2,16 @@ package xyz.discretezoo.web.db
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import xyz.discretezoo.web.db.ZooGraph._
-import xyz.discretezoo.web.db.ZooManiplex.ManiplexTable
-import xyz.discretezoo.web.db.ZooPostgresProfile.api._
-import slick.collection.heterogeneous.HNil
-import slick.lifted.TableQuery
 
-import slick.ast.Ordering
 import scala.concurrent.{Await, ExecutionContext, Future}
 
-object ZooDbNew {
+import slick.lifted.TableQuery
+
+import xyz.discretezoo.web.db.ZooGraph._
+import xyz.discretezoo.web.db.ZooManiplex.{Maniplex, ManiplexTable}
+import xyz.discretezoo.web.db.ZooPostgresProfile.api._
+
+object ZooDb {
 
   implicit val system: ActorSystem = ActorSystem("ZooActors")
   implicit val materializer: ActorMaterializer = ActorMaterializer()
@@ -26,25 +26,17 @@ object ZooDbNew {
     "org.postgresql.Driver")
 
   object graphs extends TableQuery(new GraphTable(_))
+  object maniplexes extends TableQuery(new ManiplexTable(_))
 
-  def t(g: GraphTable) = g.indexCVT
+  def countGraphs(qp: SearchParam): Future[Int] = db.run(graphs.dynamicQueryCount(qp).length.result)
+  def countManiplexes(qp: SearchParam): Future[Int] = db.run(maniplexes.dynamicQueryCount(qp).length.result)
 
-  def getGraphs(collections: Seq[String], filters: Seq[Condition], sort: Seq[OrderBy], limit: Int, page: Int): Future[Seq[Graph]] = {
-    val offset = (page - 1) * limit
-    val sortBy = sort.map(s => s.order match {
-      case "ASC" => Some((s.field, Ordering.Asc))
-      case "DESC" => Some((s.field, Ordering.Desc))
-      case _ => None
-    }).collect({ case Some(v) => v })
-    val future = for {
-      graph <- graphs
-        .filterIf(collections.nonEmpty)(g => GraphColumns.filterCollections(g, collections))
-        .filter(g => GraphColumns.filter(g, filters))
-        .drop(offset).take(limit)
-        .dynamicSortBy(sortBy)
-        .result
-    } yield graph
-    db.run(future)
+  def getGraphs(qp: ResultParam): Future[Seq[Graph]] = db.run(graphs.dynamicQueryResults(qp).result)
+  def getManiplexes(qp: ResultParam): Future[Seq[Maniplex]] = db.run(maniplexes.dynamicQueryResults(qp).result)
+
+  def checkSQLSearch(qp: SearchParam): Future[Int] = {
+    println(graphs.dynamicQueryCount(qp).length.result.statements)
+    db.run(graphs.dynamicQueryCount(qp).length.result)
   }
 
 //  def create(): Unit = {
