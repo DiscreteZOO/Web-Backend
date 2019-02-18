@@ -25,9 +25,7 @@ object ZooDb {
     null,
     "org.postgresql.Driver")
 
-  val graphTable = new GraphTable(_)
-
-  object graphs extends TableQuery(graphTable)
+  object graphs extends TableQuery(new GraphTable(_))
   object maniplexes extends TableQuery(new ManiplexTable(_))
 
   def count(sp: SearchParameters): Future[Count] = {

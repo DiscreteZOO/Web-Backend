@@ -3,7 +3,7 @@ package xyz.discretezoo.web.db.ZooGraph
 import slick.collection.heterogeneous.HNil
 import slick.lifted.ProvenShape
 import xyz.discretezoo.web.ZooPostgresProfile.api._
-import xyz.discretezoo.web.db.DynamicSupport.ColumnSelector
+import xyz.discretezoo.web.DynamicSupport.ColumnSelector
 
 final class GraphTable(tag: Tag) extends Table[Graph](tag, "ZOO_GRAPH") with ColumnSelector {
 

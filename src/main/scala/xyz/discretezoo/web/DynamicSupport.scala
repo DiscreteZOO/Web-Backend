@@ -1,12 +1,9 @@
-package xyz.discretezoo.web.db
+package xyz.discretezoo.web
 
-import slick.ast.Ordering.Direction
 import slick.ast.Ordering
+import slick.ast.Ordering.Direction
 import slick.lifted.{ColumnOrdered, Ordered, Query, Rep}
-import xyz.discretezoo.web._
 import xyz.discretezoo.web.ZooPostgresProfile.api._
-
-// https://stackoverflow.com/questions/42383842/dynamic-order-by-in-scala-slick-with-several-columns
 
 object DynamicSupport {
 

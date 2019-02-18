@@ -5,9 +5,7 @@ import slick.ast.Ordering.Direction
 import xyz.discretezoo.web.ZooJsonAPI.Parameter
 
 case class ResultParam(page: Int, limit: Int, parameters: SearchParam, sort: Seq[(String, Direction)]) {
-
   val offset: Int = (page - 1) * limit
-
 }
 
 object ResultParam {
