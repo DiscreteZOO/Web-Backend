@@ -2,8 +2,6 @@ package xyz.discretezoo.web.db.ZooManiplex
 
 import java.util.UUID
 
-import xyz.discretezoo.web.db.ZooObject
-
 case class Maniplex(
  UUID: UUID,
  // boolean
@@ -17,4 +15,4 @@ case class Maniplex(
  // string
 // symmetryType: Option[String]
 )
-extends ZooObject
+

@@ -1,7 +1,6 @@
-package xyz.discretezoo.web.db
+package xyz.discretezoo.web
 
 import com.github.tminglei.slickpg._
-import slick.jdbc.PostgresProfile
 
 trait ZooPostgresProfile extends ExPostgresProfile with PgArraySupport {
 

@@ -1,4 +1,4 @@
-package xyz.discretezoo.web.db
+package xyz.discretezoo.web
 
 sealed trait Condition {
   val field: String

@@ -4,9 +4,8 @@ import java.util.UUID
 
 import slick.collection.heterogeneous.HNil
 import slick.lifted.{ProvenShape, Rep}
-
 import xyz.discretezoo.web.db.DynamicSupport
-import xyz.discretezoo.web.db.ZooPostgresProfile.api._
+import xyz.discretezoo.web.ZooPostgresProfile.api._
 
 final class ManiplexTable(tag: Tag) extends Table[Maniplex](tag, "ZOO_MANIPLEX") with DynamicSupport.ColumnSelector {
 

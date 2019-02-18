@@ -4,12 +4,11 @@ import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 
 import scala.concurrent.{Await, ExecutionContext, Future}
-
 import slick.lifted.TableQuery
-
+import xyz.discretezoo.web.{ResultParam, SearchParam, ZooPostgresProfile}
 import xyz.discretezoo.web.db.ZooGraph._
 import xyz.discretezoo.web.db.ZooManiplex.{Maniplex, ManiplexTable}
-import xyz.discretezoo.web.db.ZooPostgresProfile.api._
+import xyz.discretezoo.web.ZooPostgresProfile.api._
 
 object ZooDb {
 

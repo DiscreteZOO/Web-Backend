@@ -1,7 +1,5 @@
 package xyz.discretezoo.web.db.ZooGraph
 
-import xyz.discretezoo.web.db.ZooObject
-
 case class Graph(
   zooid: Int,
   order: Int,
@@ -34,4 +32,3 @@ case class Graph(
   oddGirth: Option[Int],
   size: Option[Int],
   trianglesCount: Option[Int])
-extends ZooObject

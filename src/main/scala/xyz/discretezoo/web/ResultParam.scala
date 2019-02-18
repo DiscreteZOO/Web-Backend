@@ -1,8 +1,8 @@
-package xyz.discretezoo.web.db
+package xyz.discretezoo.web
 
 import slick.ast.Ordering
 import slick.ast.Ordering.Direction
-import xyz.discretezoo.web.{Parameter, SearchParameters}
+import xyz.discretezoo.web.ZooJsonAPI.Parameter
 
 case class ResultParam(page: Int, limit: Int, parameters: SearchParam, sort: Seq[(String, Direction)]) {
 

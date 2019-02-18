@@ -1,6 +1,6 @@
-package xyz.discretezoo.web.db
+package xyz.discretezoo.web
 
-import xyz.discretezoo.web.Parameter
+import xyz.discretezoo.web.ZooJsonAPI.Parameter
 
 case class SearchParam(collections: Seq[String], filter: Seq[Condition])
 

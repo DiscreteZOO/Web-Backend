@@ -4,20 +4,20 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.{Directives, Route}
 import akka.stream.ActorMaterializer
-import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
-import spray.json._
-import DefaultJsonProtocol._
 
+import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 import scala.concurrent.ExecutionContext
-import spray.json.{JsObject, JsValue}
+import spray.json._
+
+import xyz.discretezoo.web.ZooJsonAPI._
 import xyz.discretezoo.web.db.ZooGraph.Graph
 import xyz.discretezoo.web.db.ZooManiplex.Maniplex
-import xyz.discretezoo.web.db.{ResultParam, SearchParam, ZooDb}
-import xyz.discretezoo.web.db.model.{GraphRecord, ManiplexRecord}
+import xyz.discretezoo.web.db.ZooDb
 
 object WebServer extends Directives with JsonSupport {
 
   @volatile var keepRunning = true
+
   def main(args: Array[String]) {
 
     implicit val system: ActorSystem = ActorSystem("ZooActors")
@@ -104,10 +104,3 @@ object WebServer extends Directives with JsonSupport {
   }
 
 }
-
-case class Count(value: Int)
-
-case class ResultsParameters(page: Int, pageSize: Int, parameters: SearchParameters, orderBy: List[Parameter])
-case class SearchParameters(objects: String, collections: List[String], filters: List[Parameter])
-case class Parameter(name: String, value: String)
-case class SearchResult[T](pages: Int, data: List[T])
