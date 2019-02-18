@@ -5,7 +5,8 @@ import akka.stream.ActorMaterializer
 
 import scala.concurrent.{Await, ExecutionContext, Future}
 import slick.lifted.TableQuery
-import xyz.discretezoo.web.{ResultParam, SearchParam, ZooPostgresProfile}
+import xyz.discretezoo.web.ZooJsonAPI.{Count, ResultsParameters, SearchParameters}
+import xyz.discretezoo.web.{ResultParam, SearchParam, ZooObject, ZooPostgresProfile}
 import xyz.discretezoo.web.db.ZooGraph._
 import xyz.discretezoo.web.db.ZooManiplex.{Maniplex, ManiplexTable}
 import xyz.discretezoo.web.ZooPostgresProfile.api._
@@ -24,14 +25,34 @@ object ZooDb {
     null,
     "org.postgresql.Driver")
 
-  object graphs extends TableQuery(new GraphTable(_))
+  val graphTable = new GraphTable(_)
+
+  object graphs extends TableQuery(graphTable)
   object maniplexes extends TableQuery(new ManiplexTable(_))
 
-  def countGraphs(qp: SearchParam): Future[Int] = db.run(graphs.dynamicQueryCount(qp).length.result)
-  def countManiplexes(qp: SearchParam): Future[Int] = db.run(maniplexes.dynamicQueryCount(qp).length.result)
+  def count(sp: SearchParameters): Future[Count] = {
+    val qp = SearchParam.get(sp.collections, sp.filters)
+    val r = sp.objects match {
+      case "graphs" => db.run(graphs.dynamicQueryCount(qp).length.result)
+      case "maniplexes" => db.run(maniplexes.dynamicQueryCount(qp).length.result)
+    }
+    r.map(Count)
+  }
 
-  def getGraphs(qp: ResultParam): Future[Seq[Graph]] = db.run(graphs.dynamicQueryResults(qp).result)
-  def getManiplexes(qp: ResultParam): Future[Seq[Maniplex]] = db.run(maniplexes.dynamicQueryResults(qp).result)
+  def get(rp: ResultsParameters): Future[(Int, Seq[ZooObject])] = {
+    val qp = SearchParam.get(rp.parameters.collections, rp.parameters.filters)
+    val count: DBIO[Int] = graphs.dynamicQueryCount(qp).length.result
+    val get: DBIO[(Int, Seq[ZooObject])] = count.flatMap(c => {
+      val pages = (c / rp.pageSize).ceil.toInt
+      val actualPage = if (rp.page >= 1 && rp.page <= pages) rp.page else 1
+      val query = rp.parameters.objects match {
+        case "graphs" => graphs.dynamicQueryResults(ResultParam.get(actualPage, rp.pageSize, qp, rp.orderBy))
+        case "maniplexes" => maniplexes.dynamicQueryResults(ResultParam.get(actualPage, rp.pageSize, qp, rp.orderBy))
+      }
+      query.result.map(seq => (pages, seq))
+    })
+    db.run(get)
+  }
 
   def checkSQLSearch(qp: SearchParam): Future[Int] = {
     println(graphs.dynamicQueryCount(qp).length.result.statements)

@@ -2,6 +2,8 @@ package xyz.discretezoo.web.db.ZooManiplex
 
 import java.util.UUID
 
+import xyz.discretezoo.web.ZooObject
+
 case class Maniplex(
  UUID: UUID,
  // boolean
@@ -14,5 +16,16 @@ case class Maniplex(
  smallGroupOrder: Option[Int]
  // string
 // symmetryType: Option[String]
-)
+) extends ZooObject {
 
+  def select: Map[String, _] = Map(
+    "uuid" -> UUID,
+    "is_polytope" -> isPolytope,
+    "is_regular" -> isRegular,
+    "orbits" -> orbits,
+    "rank" -> rank,
+    "small_group_id" -> smallGroupId,
+    "small_group_order" -> smallGroupOrder
+  )
+
+}
