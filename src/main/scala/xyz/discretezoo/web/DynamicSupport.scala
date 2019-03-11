@@ -34,8 +34,8 @@ object DynamicSupport {
         case (condition, queryToFilter) =>
           val filterColumnRep: A => Rep[_] = _.select(condition.field)
           queryToFilter.filter(filterColumnRep)(v => (v, condition) match {
-            case (value: Rep[Int], condition: NumericCondition) => numericFilter(value, condition)
-            case (value: Rep[Boolean], condition: BooleanCondition) => booleanFilter(value, condition)
+            case (value: Rep[Int @unchecked], condition: NumericCondition) => numericFilter(value, condition)
+            case (value: Rep[Boolean @unchecked], condition: BooleanCondition) => booleanFilter(value, condition)
             case _ => true
           })
 
@@ -53,14 +53,14 @@ object DynamicSupport {
 
     private def booleanFilter(value: Rep[_ >: Boolean with Option[Boolean]], condition: BooleanCondition): Rep[Boolean] = {
       value match {
-        case v: Rep[Boolean] => v === condition.b
-        case v: Rep[Option[Boolean]] => (v === condition.b).getOrElse(false)
+        case v: Rep[Boolean @unchecked] => v === condition.b
+        case v: Rep[Option[Boolean] @unchecked] => (v === condition.b).getOrElse(false)
       }
     }
 
     private def numericFilter(value: Rep[_ >: Int with Option[Int]], condition: NumericCondition): Rep[Boolean] = {
       value match {
-        case v: Rep[Int] => condition.op match {
+        case v: Rep[Int @unchecked] => condition.op match {
           case "=" | "==" => v === condition.i
           case "<" => v < condition.i
           case ">" => v > condition.i
@@ -68,7 +68,7 @@ object DynamicSupport {
           case ">=" => v >= condition.i
           case "<>" | "!=" => v =!= condition.i
         }
-        case v: Rep[Option[Int]] => {
+        case v: Rep[Option[Int] @unchecked] => {
           val evaluate: Rep[Option[Boolean]] = condition.op match {
             case "=" | "==" => v === condition.i
             case "<" => v < condition.i

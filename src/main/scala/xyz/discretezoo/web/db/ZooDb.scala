@@ -7,9 +7,11 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 import slick.lifted.TableQuery
 import xyz.discretezoo.web.ZooJsonAPI.{Count, ResultsParameters, SearchParameters}
 import xyz.discretezoo.web.{ResultParam, SearchParam, ZooObject, ZooPostgresProfile}
-import xyz.discretezoo.web.db.ZooGraph._
-import xyz.discretezoo.web.db.ZooManiplex.{Maniplex, ManiplexTable}
 import xyz.discretezoo.web.ZooPostgresProfile.api._
+import xyz.discretezoo.web.db.ZooGraph.{Graph, GraphPlainQuery, GraphTable}
+import xyz.discretezoo.web.db.ZooManiplex.{Maniplex, ManiplexPlainQuery, ManiplexTable}
+
+import scala.concurrent.duration.Duration
 
 object ZooDb {
 
@@ -28,26 +30,22 @@ object ZooDb {
   object graphs extends TableQuery(new GraphTable(_))
   object maniplexes extends TableQuery(new ManiplexTable(_))
 
-  def count(sp: SearchParameters): Future[Count] = {
+  def count(sp: SearchParameters, plain: Boolean = true): Future[Count] = {
     val qp = SearchParam.get(sp.collections, sp.filters)
-    val r = sp.objects match {
-      case "graphs" => db.run(graphs.dynamicQueryCount(qp).length.result)
-      case "maniplexes" => db.run(maniplexes.dynamicQueryCount(qp).length.result)
-    }
-    r.map(Count)
+    val q: DBIO[Int] = countDBIO(sp.objects, qp, plain)
+//    println(Await.result(test(), Duration.Inf))
+    db.run(q).map(Count)
   }
 
-  def get(rp: ResultsParameters): Future[(Int, Seq[ZooObject])] = {
+  def get(rp: ResultsParameters, plain: Boolean = true): Future[(Int, Seq[ZooObject])] = {
     val qp = SearchParam.get(rp.parameters.collections, rp.parameters.filters)
-    val count: DBIO[Int] = graphs.dynamicQueryCount(qp).length.result
+    val count: DBIO[Int] = countDBIO(rp.parameters.objects, qp, plain)
     val get: DBIO[(Int, Seq[ZooObject])] = count.flatMap(c => {
       val pages = (c / rp.pageSize).ceil.toInt
       val actualPage = if (rp.page >= 1 && rp.page <= pages) rp.page else 1
-      val query = rp.parameters.objects match {
-        case "graphs" => graphs.dynamicQueryResults(ResultParam.get(actualPage, rp.pageSize, qp, rp.orderBy))
-        case "maniplexes" => maniplexes.dynamicQueryResults(ResultParam.get(actualPage, rp.pageSize, qp, rp.orderBy))
-      }
-      query.result.map(seq => (pages, seq))
+      val parameters = ResultParam.get(actualPage, rp.pageSize, qp, rp.orderBy)
+      val query: DBIO[Seq[ZooObject]] = getDBIO(rp.parameters.objects, parameters, plain)
+      query.map(seq => (pages, seq))
     })
     db.run(get)
   }
@@ -63,5 +61,23 @@ object ZooDb {
 //      Await.result(ZooDbNew.db.run(setup), Duration.Inf)
 //    }
 //  }
+
+  private def getDBIO(objects: String, rp: ResultParam, plain: Boolean = true): DBIO[Seq[ZooObject]] = {
+    (objects, plain) match {
+      case ("graphs", true) => GraphPlainQuery.get(rp)
+      case ("maniplexes", true) => ManiplexPlainQuery.get(rp)
+      case ("graphs", false) => graphs.dynamicQueryResults(rp).result
+      case ("maniplexes", false) => maniplexes.dynamicQueryResults(rp).result
+    }
+  }
+
+  private def countDBIO(objects: String, qp: SearchParam, plain: Boolean = true): DBIO[Int] = {
+    (objects, plain) match {
+      case ("graphs", true) => GraphPlainQuery.count(qp)
+      case ("maniplexes", true) => ManiplexPlainQuery.count(qp)
+      case ("graphs", false) => graphs.dynamicQueryCount(qp).length.result
+      case ("maniplexes", false) => maniplexes.dynamicQueryCount(qp).length.result
+    }
+  }
 
 }

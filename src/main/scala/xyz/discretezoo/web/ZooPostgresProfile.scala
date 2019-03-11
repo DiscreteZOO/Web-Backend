@@ -17,7 +17,6 @@ trait ZooPostgresProfile extends ExPostgresProfile with PgArraySupport {
     }
 
   }
-
 }
 
 object ZooPostgresProfile extends ZooPostgresProfile

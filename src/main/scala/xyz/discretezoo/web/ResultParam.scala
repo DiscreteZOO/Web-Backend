@@ -9,15 +9,12 @@ case class ResultParam(page: Int, limit: Int, parameters: SearchParam, sort: Seq
 }
 
 object ResultParam {
-  def get(page: Int, limit: Int, parameters: SearchParam, sort: List[Parameter]) =
-    ResultParam(
-      page,
-      limit,
-      parameters,
-      sort.map(s => s.name match {
-        case "ASC" => Some((s.value, Ordering.Asc))
-        case "DESC" => Some((s.value, Ordering.Desc))
-        case _ => None
-      }).collect({ case Some(v) => v })
-    )
+  def get(page: Int, limit: Int, parameters: SearchParam, sort: List[Parameter]): ResultParam = {
+    val actualSort = sort.map(s => s.value match {
+      case "ASC" => Some((s.name, Ordering.Asc))
+      case "DESC" => Some((s.name, Ordering.Desc))
+      case _ => None
+    }).collect({ case Some(v) => v })
+    ResultParam(page, limit, parameters, actualSort)
+  }
 }
