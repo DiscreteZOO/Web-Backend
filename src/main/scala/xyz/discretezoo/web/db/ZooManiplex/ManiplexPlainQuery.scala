@@ -1,7 +1,6 @@
 package xyz.discretezoo.web.db.ZooManiplex
 
 import java.util.UUID
-
 import slick.jdbc.GetResult
 import xyz.discretezoo.web.PlainSQLSupport
 

@@ -3,15 +3,14 @@ package xyz.discretezoo.web.db
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext, Future}
 import slick.lifted.TableQuery
 import xyz.discretezoo.web.ZooJsonAPI.{Count, ResultsParameters, SearchParameters}
 import xyz.discretezoo.web.{ResultParam, SearchParam, ZooObject, ZooPostgresProfile}
 import xyz.discretezoo.web.ZooPostgresProfile.api._
-import xyz.discretezoo.web.db.ZooGraph.{Graph, GraphPlainQuery, GraphTable}
-import xyz.discretezoo.web.db.ZooManiplex.{Maniplex, ManiplexPlainQuery, ManiplexTable}
-
-import scala.concurrent.duration.Duration
+import xyz.discretezoo.web.db.ZooExample.{ExamplePlainQuery, ExampleTable}
+import xyz.discretezoo.web.db.ZooGraph.{GraphPlainQuery, GraphTable}
+import xyz.discretezoo.web.db.ZooManiplex.{ManiplexPlainQuery, ManiplexTable}
 
 object ZooDb {
 
@@ -29,11 +28,11 @@ object ZooDb {
 
   object graphs extends TableQuery(new GraphTable(_))
   object maniplexes extends TableQuery(new ManiplexTable(_))
+  object example extends TableQuery(new ExampleTable(_))
 
   def count(sp: SearchParameters, plain: Boolean = true): Future[Count] = {
     val qp = SearchParam.get(sp.collections, sp.filters)
     val q: DBIO[Int] = countDBIO(sp.objects, qp, plain)
-//    println(Await.result(test(), Duration.Inf))
     db.run(q).map(Count)
   }
 
@@ -66,8 +65,10 @@ object ZooDb {
     (objects, plain) match {
       case ("graphs", true) => GraphPlainQuery.get(rp)
       case ("maniplexes", true) => ManiplexPlainQuery.get(rp)
+      case ("example", true) => ExamplePlainQuery.get(rp)
       case ("graphs", false) => graphs.dynamicQueryResults(rp).result
       case ("maniplexes", false) => maniplexes.dynamicQueryResults(rp).result
+      case ("example", false) => example.dynamicQueryResults(rp).result
     }
   }
 
@@ -75,8 +76,10 @@ object ZooDb {
     (objects, plain) match {
       case ("graphs", true) => GraphPlainQuery.count(qp)
       case ("maniplexes", true) => ManiplexPlainQuery.count(qp)
+      case ("example", true) => ExamplePlainQuery.count(qp)
       case ("graphs", false) => graphs.dynamicQueryCount(qp).length.result
       case ("maniplexes", false) => maniplexes.dynamicQueryCount(qp).length.result
+      case ("example", false) => example.dynamicQueryCount(qp).length.result
     }
   }
 

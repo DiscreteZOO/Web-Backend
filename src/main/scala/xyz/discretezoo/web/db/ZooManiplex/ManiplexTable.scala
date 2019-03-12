@@ -3,10 +3,8 @@ package xyz.discretezoo.web.db.ZooManiplex
 import java.util.UUID
 
 import slick.collection.heterogeneous.HNil
-import slick.jdbc.GetResult
 import slick.lifted.{ProvenShape, Rep}
 import xyz.discretezoo.web.DynamicSupport.ColumnSelector
-import xyz.discretezoo.web.PlainSQLSupport
 import xyz.discretezoo.web.ZooPostgresProfile.api._
 
 final class ManiplexTable(tag: Tag) extends Table[Maniplex](tag, "ZOO_MANIPLEX") with ColumnSelector {
