@@ -30,7 +30,7 @@ object WebServer extends Directives with JsonSupport {
           entity(as[SearchParameters]) { p => ctx => ZooDb.count(p, true).flatMap(c => ctx.complete(c)) }
         } ~ path("results") {
           entity(as[ResultsParameters]) { p => { ctx =>
-            ZooDb.get(p, false).flatMap(r => ctx.complete(SearchResult(r._1, r._2.map(writeZooObject).toList)))
+            ZooDb.get(p, false).flatMap(r => ctx.complete(SearchResult(r._1, r._2.toList)))
           } }
         }
       }

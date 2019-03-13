@@ -29,7 +29,7 @@ final class ManiplexTable(tag: Tag) extends Table[Maniplex](tag, "ZOO_MANIPLEX")
     ).mapTo[Maniplex]
 
   val select: Map[String, Rep[_]] = Map(
-    "uuid" -> this.uuid,
+    "UUID" -> this.uuid,
 
     "is_polytope" -> this.isPolytope,
     "is_regular" -> this.isRegular,

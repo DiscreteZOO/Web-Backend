@@ -40,9 +40,9 @@ case class Graph(
   "zooid" -> zooid,
   "order" -> order,
 
-  "index_cvt" -> indexCVT,
-  "index_symcubic" -> indexSymCubic,
-  "index_vt" -> indexVT,
+  "index_CVT" -> indexCVT,
+  "index_symcubic" -> indexSymcubic,
+  "index_VT" -> indexVT,
 
   "is_arc_transitive" -> isArcTransitive,
   "is_bipartite" -> isBipartite,

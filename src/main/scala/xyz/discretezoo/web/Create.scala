@@ -8,7 +8,7 @@ import scala.concurrent.duration.Duration
 import xyz.discretezoo.web.ZooPostgresProfile.api._
 import xyz.discretezoo.web.db.ZooExample.ExampleTable
 
-object DbApp {
+object Create {
 
   def main(args: Array[String]): Unit = {
 

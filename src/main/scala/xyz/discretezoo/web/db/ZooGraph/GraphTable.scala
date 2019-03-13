@@ -11,7 +11,7 @@ final class GraphTable(tag: Tag) extends Table[Graph](tag, "ZOO_GRAPH") with Col
   def order: Rep[Int] = column[Int]("ORDER")
 
   def indexCVT: Rep[Option[Int]] = column[Option[Int]]("INDEX_CVT")
-  def indexSymCubic: Rep[Option[Int]] = column[Option[Int]]("INDEX_SYMCUBIC")
+  def indexSymcubic: Rep[Option[Int]] = column[Option[Int]]("INDEX_SYMCUBIC")
   def indexVT: Rep[Option[Int]] = column[Option[Int]]("INDEX_VT")
 
   def isArcTransitive: Rep[Option[Boolean]] = column[Option[Boolean]]("IS_ARC_TRANSITIVE")
@@ -42,7 +42,7 @@ final class GraphTable(tag: Tag) extends Table[Graph](tag, "ZOO_GRAPH") with Col
   def * : ProvenShape[Graph] = (
     zooid :: order ::
       // indexes
-      indexCVT :: indexSymCubic :: indexVT ::
+      indexCVT :: indexSymcubic :: indexVT ::
       // booleans
       isArcTransitive :: isBipartite :: isCayley :: isDistanceRegular :: isDistanceTransitive :: isEdgeTransitive ::
       isEulerian :: isHamiltonian :: isMoebiusLadder:: isOverfull :: isPartialCube :: isPrism :: isSplit ::
@@ -52,14 +52,14 @@ final class GraphTable(tag: Tag) extends Table[Graph](tag, "ZOO_GRAPH") with Col
       trianglesCount ::
       HNil
     ).mapTo[Graph]
-  
+
   val select: Map[String, Rep[_]] = Map(
     "zooid" -> this.zooid,
     "order" -> this.order,
-    
-    "index_cvt" -> this.indexCVT,
-    "index_symcubic" -> this.indexSymCubic,
-    "index_vt" -> this.indexVT,
+
+    "index_CVT" -> this.indexCVT,
+    "index_symcubic" -> this.indexSymcubic,
+    "index_VT" -> this.indexVT,
 
     "is_arc_transitive" -> this.isArcTransitive,
     "is_bipartite" -> this.isBipartite,
@@ -89,7 +89,7 @@ final class GraphTable(tag: Tag) extends Table[Graph](tag, "ZOO_GRAPH") with Col
 
   val inCollection: Map[String, Rep[Boolean]] = Map(
     "CVT" -> this.indexCVT.nonEmpty,
-    "CAT" -> this.indexSymCubic.nonEmpty,
+    "CAT" -> this.indexSymcubic.nonEmpty,
     "VT" -> this.indexVT.nonEmpty
   )
 

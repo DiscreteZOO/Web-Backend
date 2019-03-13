@@ -19,7 +19,7 @@ case class Maniplex(
 ) extends ZooObject {
 
   def select: Map[String, _] = Map(
-    "uuid" -> UUID,
+    "UUID" -> UUID,
     "is_polytope" -> isPolytope,
     "is_regular" -> isRegular,
     "orbits" -> orbits,
